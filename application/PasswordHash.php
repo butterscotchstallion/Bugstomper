@@ -1,1 +1,0 @@
-<?php/* * phpass hashing framework * */ // Base-2 logarithm of the iteration count used for password stretching$hashCostLog2 = 8;// Do we require the hashes to be portable to older systems (less secure)?$hashPortable = false;$hasher = new PasswordHash($hashCostLog2, $hashPortable);$hash   = $hasher->HashPassword($pass);

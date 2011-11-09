@@ -1,1 +1,0 @@
-<?phpclass Loader{	private $map = array();		public function __construct($map)	{		$this->map = $map;	}		public function Load()	{		return false;	}}
