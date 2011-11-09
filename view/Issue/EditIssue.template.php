@@ -1,0 +1,1 @@
+<?php require 'header.template.php';?><?php require 'footer.template.php';?>
