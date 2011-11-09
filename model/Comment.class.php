@@ -2,7 +2,6 @@
 /*
  * Comment - model for comments on issues
  *
- *
  */
 class Comment extends Model
 {
