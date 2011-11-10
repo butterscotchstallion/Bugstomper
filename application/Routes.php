@@ -121,11 +121,11 @@ $specificIssueCallback = function() use($connection,
 	$issue     	 = $objIssue->GetIssueByID($id);
 
 	// Change log
-	$changelog   = $objIssue->GetIssueChangeLog($id);
-	$objTpl 	 = new Template();
+	$changelog     = $objIssue->GetIssueChangeLog($id);
+	$objTpl 	   = new Template();
 	$issueSeverity = $objIssue->GetSeverity();
 	$issueStatus   = $objIssue->GetStatus();
-	$readOnly    = true;
+	$readOnly      = true;
 	
 	// Issue comments
 	$objComment    = new Comment($connection);
