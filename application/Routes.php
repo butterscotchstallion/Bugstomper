@@ -4,7 +4,7 @@
  *
  *
  */
- 
+
 $objRouter = new Router();	
 $objRouter->SetDebug(true);
 
@@ -68,32 +68,17 @@ $editGETCallback = function() use($connection,
 								  $userLogin,
 								  $objAsset) 
 {
-	// Edit mode on!
-	$readOnly    = false;
-	$editingBug  = true;
+	$objIssueController   = new IssueController($connection);
+	$tplVars 			  = $objIssueController->Edit($editGETPattern);
+	$tplVars['userLogin'] = $userLogin;
+	$tplVars['objAsset']  = $objAsset;
+	$tplVars['objAsset']  = $objAsset;
 	
-	// Get issue ID out of URI
-	preg_match_all($editGETPattern, 
-				   $_SERVER['REQUEST_URI'], 
-				   $matches);
-	
-	$objTpl 	 = new Template();
-	$objIssue  	 = new Issue($connection);
-	$id		 	 = isset($matches[1][0]) ? intval($matches[1][0]) : 0;
-	$issue     	 = $objIssue->GetIssueByID($id);
-	
-	$issueSeverity = $objIssue->GetSeverity();
-	$issueStatus   = $objIssue->GetStatus();
-	
-	// List for assigned users
-	$objUser     = new User($connection);
-	$users		 = $objUser->GetUsers();
-
-	// Issue comments
-	$objComment    = new Comment($connection);
-	$issueComments = $objComment->GetComments($id); 
-	
-	require '../view/Issue/Issue.template.php';
+    $objTpl 	          = new Template();
+    $tplVars['objTpl']    = $objTpl;
+    
+	View::Display(array('tpl' 	  => '../view/Issue/Issue.template.php',
+						'tplVars' => $tplVars));
 };
 
 $objRouter->AddRoute(array('pattern'  => $editGETPattern,
@@ -125,15 +110,19 @@ $specificIssueCallback = function() use($connection,
 	$objTpl 	   = new Template();
 	$issueSeverity = $objIssue->GetSeverity();
 	$issueStatus   = $objIssue->GetStatus();
-	$readOnly      = true;
-	
+
 	// Issue comments
 	$objComment    = new Comment($connection);
 	$issueComments = $objComment->GetComments($id); 
 	
-	//print_r($_SESSION);
-	
-	require '../view/Issue/Issue.template.php';
+	View::Display(array('tpl'     => '../view/Issue/Issue.template.php',
+                        'tplVars' => array('issueComments' => $issueComments,
+                                           'readOnly'      => true,
+                                           'issueStatus'   => $issueStatus,
+                                           'issueSeverity' => $issueSeverity,
+                                           'objTpl'        => $objTpl,
+                                           'issue'         => $issue,
+                                           'objAsset'      => $objAsset)));
 };
 
 $objRouter->AddRoute(array('pattern'  => $spMapPattern,
@@ -165,10 +154,16 @@ $issuesCallback = function() use($connection,
 	// List for assigned users
 	$objUser     = new User($connection);
 	$users		 = $objUser->GetUsers();
-
-	//print_r($_SESSION);
-
-	require '../view/Issue/IssuesList.template.php';
+    
+	View::Display(array('tpl'     => '../view/Issue/IssuesList.template.php',
+                        'tplVars' => array('users'          => $users,
+                                           'issues'         => $issues,
+                                           'issueSeverity'  => $issueSeverity,
+                                           'statusFilters'  => $statusFilters,
+                                           'statusList'     => $statusList,
+                                           'assignedFilter' => $assignedFilter,
+                                           'query'          => $query,
+                                           'objAsset'       => $objAsset)));
 };
 
 $objRouter->AddRoute(array('pattern'  => '#^/issues(.*)#',
@@ -247,9 +242,7 @@ $editBugCallback = function() use($connection,
 	
 	$objIssue   = new Issue($connection);
 	$newBugID = $objIssue->Update($objNew, $objOld);
-	
-	//die;
-	
+
 	header('HTTP 1.1 202 Accepted');
 	header(sprintf('Location: %s', $return));
 	die;
@@ -303,7 +296,11 @@ $userProfileCallback = function() use($connection,
 	$openedIssues   = $objIssue->GetIssuesOpenedByUser($userID);
 	$assignedIssues = $objIssue->GetIssuesAssignedToUser($userID);
 	
-	require '../view/User/UserProfile.template.php';
+	View::Display(array('tpl'     => '../view/User/UserProfile.template.php',
+                        'tplVars' => array('openedIssues'   => $openedIssues,
+                                           'assignedIssues' => $assignedIssues,
+                                           'user'           => $user,
+                                           'objAsset'       => $objAsset)));
 };
 
 $objRouter->AddRoute(array('pattern'  => $userProfilePattern,
@@ -315,7 +312,8 @@ $objRouter->AddRoute(array('pattern'  => $userProfilePattern,
  */
 $userSignInCallback = function() use($objAsset)
 {
-	require '../view/User/UserSignIn.template.php';
+    View::Display(array('tpl'     => '../view/User/UserSignIn.template.php',
+                        'tplVars' => array('objAsset' => $objAsset)));
 };
 
 $objRouter->AddRoute(array('pattern'  => '#^/user/sign-in$#',
@@ -368,11 +366,7 @@ $userSetCredsCallback = function()
 	$userLogin    = $userSignedIn ? $attr['contact/email'] : '';
 	$identity     = isset($objOpenID->data['openid_identity']) ? $objOpenID->data['openid_identity'] : false; 
 	$claimedID    = isset($objOpenID->data['openid_claimed_id']) ? $objOpenID->data['openid_claimed_id'] : false; 
-	
-	//print_r($objOpenID);
-	//print_r($attr);
-	//die;
-	
+
 	// Sign in successful
 	if( $userSignedIn && $claimedID && $userLogin )
 	{
@@ -435,6 +429,7 @@ $issueStatusReportCallback = function() use($connection)
 
 	header('Content-Type: application/json');
 	echo $statusDistribution;
+    die;
 };
 
 $objRouter->AddRoute(array('pattern' => '#^/pretty-graphs-and-stuff/issue-distribution$#',
@@ -449,6 +444,7 @@ $assigneeDistributionReportCallback = function() use($connection)
 	
 	header('Content-Type: application/json');
 	echo $assigneeDistribution;
+    die;
 };
 
 $objRouter->AddRoute(array('pattern' => '#^/pretty-graphs-and-stuff/assignee-distribution$#',
@@ -463,6 +459,7 @@ $openerDistributionReportCallback = function() use($connection)
 	
 	header('Content-Type: application/json');
 	echo $openerDistribution;
+    die;
 };
 
 $objRouter->AddRoute(array('pattern' => '#^/pretty-graphs-and-stuff/opener-distribution$#',
@@ -475,7 +472,9 @@ $reportCallback = function() use($userLogin,
 								 $objAsset) 
 {	
 	$objAsset->AddJS('report');	
-	require '../view/Report/IssueStatus.template.php';
+	View::Display(array('tpl' => '../view/Report/IssueStatus.template.php',
+                        'tplVars' => array('objAsset'  => $objAsset,
+                                           'userLogin' => $userLogin)));
 };
 
 $objRouter->AddRoute(array('pattern'  => '#^/pretty-graphs-and-stuff$#',
@@ -485,9 +484,11 @@ $objRouter->AddRoute(array('pattern'  => '#^/pretty-graphs-and-stuff$#',
  * 403 (GET)
  *
  */
-$error403Callback = function() 
+$error403Callback = function() use($objAsset, $userLogin) 
 {
-	require '../view/Error/403.template.php';
+    View::Display(array('tpl' => '../view/Error/403.template.php',
+                        'tplVars' => array('objAsset'  => $objAsset,
+                                           'userLogin' => $userLogin)));
 };
 
 $objRouter->AddRoute(array('pattern'  => '#^/error/AccessDenied$#',
@@ -497,9 +498,11 @@ $objRouter->AddRoute(array('pattern'  => '#^/error/AccessDenied$#',
  * 404 (GET)
  *
  */
-$error404Callback = function() use($objAsset) {
+$error404Callback = function() use($objAsset, $userLogin) {
 	header('HTTP/1.0 404 Not Found');
-	require '../view/Error/404.template.php';
+    View::Display(array('tpl'     => '../view/Error/404.template.php',
+                        'tplVars' => array('objAsset'  => $objAsset,
+                                           'userLogin' => $userLogin)));
 };
 
 $objRouter->AddRoute(array('pattern'  => '#^/404$#',

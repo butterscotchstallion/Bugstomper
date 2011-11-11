@@ -26,8 +26,8 @@
 		<a href="/pretty-graphs-and-stuff">Pretty graphs and stuff</a>
 		
 		<div id="topUserInfoArea">
-		<?php if( isset($userLogin) && $userLogin ):?>
-			Signed in as <strong><?php echo Util::Esc($userLogin);?></strong>
+		<?php if( self::Get('userLogin') ):?>
+			Signed in as <strong><?php echo self::Get('userLogin');?></strong>
 			[<a href="/user/sign-out" title="Sign Out">Sign Out</a>]
 		<?php else:?>
 			<a href="/user/sign-in" title="Sign in">Sign In</a>
@@ -36,7 +36,7 @@
     </header>
 	
 	<?php 
-	if( isset($issues) ):
+	if( self::Get('issues') ):
 		require '../view/Issue/IssueListingFilterBar.template.php';
 	endif;
 	?>

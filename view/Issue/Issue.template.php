@@ -1,6 +1,9 @@
 <?php 
 require '../view/Global/Header.template.php';
 
+$issue = self::Get('issue');
+$readOnly = self::Get('readOnly');
+
 if( $issue ): 
 	$title = Util::Esc($issue->title);
 	$id    = $issue->id;
@@ -9,7 +12,7 @@ if( $issue ):
 	$editLink = sprintf('%s/edit', $issuelink);
 	$changelogLink = sprintf('%s/changes', $issuelink);
 	
-	if(isset($editingBug)):?>
+	if( ! $readOnly ):?>
 		<form method="post" action="">
 		<input type="hidden" name="issue[id]" value="<?php echo $id;?>">
 		<input type="hidden" name="returnTo" value="<?php echo $issuelink;?>">
@@ -26,7 +29,7 @@ if( $issue ):
 		<input id="editBugSaveButton" type="submit" value="Save">
 	<?php endif;
 	
-	if($readOnly):
+	if( $readOnly ):
 	?>
 		<h1 class="issueTitle">
 			<a href="<?php echo $issuelink;?>"
@@ -35,7 +38,7 @@ if( $issue ):
 			</a>
 		</h1>
 	<?php else:?>
-		<?php echo $objTpl->Input(array('type' 	   => 'text',
+		<?php echo self::Get('objTpl')->Input(array('type' 	   => 'text',
 										'name' => 'issue[title]',
 										'id' => 'editBugTitleBox',
 										'readOnly' => $readOnly,
@@ -71,7 +74,7 @@ if( $issue ):
 			<tr>
 				<td class="issueInfoLbl">Severity</td>
 				<td class="issueInfoValue" colspan="2">
-					<?php echo $objTpl->Input(array('type' 	   => 'select',
+					<?php echo self::Get('objTpl')->Input(array('type' 	   => 'select',
 													'name' => 'issue[severity]',
 													'readOnly' => $readOnly,
 													'selected' => $issue->severityID,
@@ -79,14 +82,14 @@ if( $issue ):
 													'valueProperty' => 'id',
 													'class'	=> array('issueSelect'),
 													'value'	   => $issue->severityName,
-													'options'  => $issueSeverity));?>
+													'options'  => self::Get('issueSeverity')));?>
 				</td>
 			</tr>
 			
 			<tr>
 				<td class="issueInfoLbl">Status</td>
 				<td class="issueInfoValue" colspan="2">
-					<?php echo $objTpl->Input(array('type' 	   => 'select',
+					<?php echo self::Get('objTpl')->Input(array('type' 	   => 'select',
 													'name' => 'issue[status]',
 													'id' => 'issueStatusSelect',
 													'title' => 'description',
@@ -96,7 +99,7 @@ if( $issue ):
 													'class'	=> array('issueSelect'),
 													'selected' => $issue->statusID,
 													'value'	   => $issue->statusName,
-													'options'  => $issueStatus));
+													'options'  => self::Get('issueStatus')));
 					?>
 											
 					<span id="issueStatusDescription"><?php echo $issue->statusDescription;?></span>
@@ -120,7 +123,7 @@ if( $issue ):
 							?>Unassigned<?php
 						endif;
 					else:
-						echo $objTpl->Input(array('type' 	   => 'select',
+						echo self::Get('objTpl')->Input(array('type' 	   => 'select',
 												  'name' => 'issue[assignedTo]',
 												  'readOnly' => $readOnly,
 												  'defaultText' => 'Unassigned',
@@ -130,7 +133,7 @@ if( $issue ):
 												  'class'	=> array('issueSelect'),
 												  'selected' => $issue->assignedToUserID,
 												  'value'	   => $issue->assignedToUserID,
-												  'options' => $users));
+												  'options' => self::Get('users')));
 					endif;
 					?>
 				</td>
@@ -139,7 +142,7 @@ if( $issue ):
 			<tr>
 				<td class="issueInfoLbl">Description</td>
 				<td class="issueInfoValue" colspan="2" id="issueDetailsDescription">
-					<?php echo $objTpl->Input(array('type' 	   => 'textarea',
+					<?php echo self::Get('objTpl')->Input(array('type' 	   => 'textarea',
 													'name' => 'issue[description]',
 													'readOnly' => $readOnly,
 													'class'    => array('issueDescriptionArea'),
@@ -165,7 +168,7 @@ if( $issue ):
 			<tr>
 				<td class="issueInfoLbl">Comments</td>
 				<td class="issueInfoValue" colspan="2">
-					<?php if( $issueComments ):?>
+					<?php if( self::Get('issueComments') ):?>
 						hi
 					<?php else:?>
 						No comments
@@ -175,7 +178,7 @@ if( $issue ):
 		</table>
 	</section>
 	
-	<?php if(isset($editingBug)):?>
+	<?php if( ! $readOnly ):?>
 		</form>
 	<?php endif;?>
 	

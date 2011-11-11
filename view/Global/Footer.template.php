@@ -5,7 +5,7 @@
   </div> 
    
   <?php 
-	$jsGroups = $objAsset->GetJSGroups();
+	$jsGroups = self::Get('objAsset')->GetJSGroups();
 	if( $jsGroups ):
   ?>
 	<script src="/min/index.php?g=<?php echo $jsGroups;?>"></script>

@@ -1,6 +1,8 @@
 <?php
 require '../view/Global/Header.template.php';
 
+$issues = View::Get('issues');
+
 if( $issues ):
 	?>
 	<table id="issues" class="zebra">

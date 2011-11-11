@@ -1,5 +1,9 @@
 <?php
-	$safeSearchQuery = Util::Esc($query);
+
+    $safeSearchQuery = View::Get('query');
+    $statusList      = View::Get('statusList');
+    $statusFilters   = View::Get('statusFilters');
+    $assignedFilter   = View::Get('assignedFilter');
 ?>
 
 <section id="issueListingFilterBar">

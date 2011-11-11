@@ -1,6 +1,9 @@
 <?php 
 	require '../view/Global/Header.template.php';
-	$userLogin = htmlentities($user->login);
+    $user           = self::Get('user');
+	$userLogin      = htmlentities($user->login);
+    $assignedIssues = self::Get('assignedIssues');
+    $openedIssues   = self::Get('openedIssues');
 ?>
 
 <h1>User profile for <?php echo $userLogin;?></h1>
