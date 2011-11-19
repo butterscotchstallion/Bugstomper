@@ -2,8 +2,8 @@
 /*
  * Template - handles view operations
  *
- *
  */
+namespace application;
 class Template
 {
 	public function Input($attributes)

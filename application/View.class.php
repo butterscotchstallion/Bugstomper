@@ -3,14 +3,23 @@
  * View - Handles displaying of given templates
  *
  */
+namespace application;
 class View
 {
-	private static $tplVars = array();
-	
-	public static function Display($settings = array())
+	private $tplVars = array();
+	private $objTemplate;
+	private $objAsset;
+    
+    public function __construct($objTemplate, $objAsset)
+    {
+        $this->objAsset    = $objAsset;
+        $this->objTemplate = $objTemplate;
+    }
+    
+	public function Display($settings = array())
 	{
 		$tpl 	 	   = isset($settings['tpl']) ? $settings['tpl'] : false;
-		self::$tplVars = isset($settings['tplVars']) ? $settings['tplVars'] : array();
+		$this->tplVars = isset($settings['tplVars']) ? $settings['tplVars'] : array();
 		
 		if( $tpl )
 		{
@@ -19,25 +28,26 @@ class View
 			if( is_readable($tplPath) )
 			{
 				require $tplPath;
+                return true;
 			}
 		}
 		
 		return false;
 	}
 
-	public static function Get($key)
+	public function Get($key)
 	{
-		$tplVars = isset(self::$tplVars[$key]) ? self::$tplVars[$key] : '';
+		$tplVars = isset($this->tplVars[$key]) ? $this->tplVars[$key] : '';
 		
 		if( is_string($tplVars) )
 		{
-			return self::Prepare($tplVars);
+			return $this->Prepare($tplVars);
 		}
 		
 		return $tplVars;
 	}
 	
-	public static function Prepare($input)
+	public function Prepare($input)
 	{
 		return htmlentities($input, ENT_COMPAT, 'UTF-8');
 	}

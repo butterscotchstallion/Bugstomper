@@ -4,6 +4,7 @@
  * only loads the libraries it needs
  *
  */
+namespace application;
 class Asset
 {
 	private $cssGroups = array();

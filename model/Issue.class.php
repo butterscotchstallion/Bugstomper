@@ -3,15 +3,11 @@
  * Issue - model for storing issues
  *
  */
+namespace model;
 class Issue extends Model
 {
 	protected $objOld;
-	
-	public function __construct($connection)
-	{
-		parent::__construct($connection);
-	}
-	
+
 	public function Update($objIssue, $objOld)
 	{
 		$assignedTo = isset($objIssue->assignedTo) ? $objIssue->assignedTo : null;

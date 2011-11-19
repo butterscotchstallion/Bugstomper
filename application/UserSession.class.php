@@ -3,6 +3,7 @@
  * Manages user session variables
  *
  */
+namespace application;
 class UserSession
 {
 	public function SignIn($userInfo)

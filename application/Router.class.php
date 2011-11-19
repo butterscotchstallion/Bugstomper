@@ -3,9 +3,9 @@
  * Router - parses request data to bridge resources and routes
  *
  */
+namespace application;
 class Router
 {
-	private $map 			   = array();
 	private $debug			   = false;
 	private $errorHandlers     = array();
 	private $routes 		   = array();
@@ -20,6 +20,11 @@ class Router
 	{
 		$this->routes[] = $route;
 	}
+    
+    public function SetRoutes($routes)
+    {
+        $this->routes = $routes;
+    }
 	
 	// @desc - Sets callbacks for particular errors
 	public function SetErrorHandler($statusCode, $callback)
@@ -49,26 +54,34 @@ class Router
 		$callback     = $route && isset($route['callback']) ? $route['callback'] : false;
 		$beforeFilter = $route && isset($route['before']) ? $route['before'] : false;
 		
-		if( $beforeFilter )
+		if( is_callable($beforeFilter) )
 		{
 			$beforeFilter();
 		}
-		
+
 		// Callback found!
-		if( $callback )
-		{
-			$callback();
-			return true;
-		}
-		
+        if( is_array($callback) && count($callback) == 2 )
+        {
+            $callbackResult = call_user_func($callback);
+            
+            if( $callbackResult )
+            {
+                return true;
+            }
+        }
+        
 		// If there is a 404 handler, use it. if not, return false
-		$error404Callback = $this->GetErrorHandler(404);
-		if( $error404Callback )
-		{
-			$error404Callback();
-			return true;
-		}
-		
+        $error404CB = $this->GetErrorHandler(404);
+		if( $error404CB )
+        {
+            $callbackResult = call_user_func($error404CB);
+            
+            if( $callbackResult )
+            {
+                return true;
+            }
+        }
+        
 		return false;
 	}
 	
@@ -82,7 +95,7 @@ class Router
 		if( $this->routes )
 		{
 			$acceptFormats = explode(',', $_SERVER['HTTP_ACCEPT']);
-				
+			
 			foreach( $this->routes as $k => $m )
 			{
 				$pattern = isset($m['pattern']) ? $m['pattern'] : '#^/$#';
@@ -98,13 +111,14 @@ class Router
 						if( in_array($accept, $acceptFormats) )
 						{
 							$m['matches'] = $matches;
+                            
 							return $m;
 						}
 					}
 				}
 			}
 		}
-
+       
 		return false;
 	}
 	

@@ -1,4 +1,6 @@
 <?php
+use application\View as View;
+use application\Util as Util;
 require '../view/Global/Header.template.php';
 
 $issues = View::Get('issues');

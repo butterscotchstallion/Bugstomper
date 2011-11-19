@@ -1,5 +1,5 @@
 <?php
-
+    use application\View as View;
     $safeSearchQuery = View::Get('query');
     $statusList      = View::Get('statusList');
     $statusFilters   = View::Get('statusFilters');

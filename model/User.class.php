@@ -3,6 +3,7 @@
  * User - operations on the User model
  *
  */
+namespace model;
 class User extends Model
 {
 	public function __construct($connection)

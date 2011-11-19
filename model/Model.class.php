@@ -3,6 +3,7 @@
  * Model - Parent object for all models
  *
  */
+namespace model;
 abstract class Model
 {
 	protected $connection;
