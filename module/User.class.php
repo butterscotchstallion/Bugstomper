@@ -4,6 +4,11 @@
  *
  */
 namespace module;
+use application\thirdparty\LightOpenID as LightOpenID;
+use application\UserSession as UserSession;
+use model\User as UserModel;
+use model\Issue as IssueModel;
+
 class User extends Module implements iModule
 {
     public function __construct()
@@ -30,7 +35,41 @@ class User extends Module implements iModule
         $routes[] = array('pattern' => '#^/user/sign-out$#',
                           'callback' => array($this, 'SignOut'));
                           
+        // Profile       
+        $routes['DisplayProfile'] = array('pattern' => '#^/user/(\d+)$#',
+                                          'callback' => array($this, 'DisplayProfile'));
+                          
         $this->SetRoutes($routes);
+    }
+    
+    public function DisplayProfile()
+    {
+        $routes             = $this->GetRoutes();
+        $userProfilePattern = $routes['DisplayProfile']['pattern'];
+
+        preg_match_all($userProfilePattern, 
+					   $_SERVER['REQUEST_URI'], 
+					   $matches);
+		$userID = isset($matches[1][0]) ? $matches[1][0] : 0;
+        $objUser = new UserModel($this->GetConnection());
+        $user    = $objUser->GetUserByID($userID);
+        
+        // User not found
+        if( ! $user )
+        {
+            header('Location: /404');
+            die;
+        }
+        
+        // Get user profile information
+        $objIssue 	    = new IssueModel($this->GetConnection());
+        $openedIssues   = $objIssue->GetIssuesOpenedByUser($userID);
+        $assignedIssues = $objIssue->GetIssuesAssignedToUser($userID);
+        
+        return $this->GetView()->Display(array('tpl'     => '../view/User/UserProfile.template.php',
+                                               'tplVars' => array('openedIssues'   => $openedIssues,
+                                                                  'assignedIssues' => $assignedIssues,
+                                                                  'user'           => $user)));
     }
     
     public function SignOut()
@@ -111,10 +150,5 @@ class User extends Module implements iModule
         {
             die($e->getMessage());
         }
-    }
-    
-    public function GetRoutes()
-    {
-        return $this->routes;
     }
 }

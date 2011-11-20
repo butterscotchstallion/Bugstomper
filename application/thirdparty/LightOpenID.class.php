@@ -47,6 +47,8 @@
  * @copyright Copyright (c) 2010, Mewp
  * @license http://www.opensource.org/licenses/mit-license.php MIT
  */
+namespace application\thirdparty;
+
 class LightOpenID
 {
     public $returnUrl

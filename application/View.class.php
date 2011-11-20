@@ -51,4 +51,14 @@ class View
 	{
 		return htmlentities($input, ENT_COMPAT, 'UTF-8');
 	}
+    
+    public function GetTemplate() 
+    {
+        return $this->objTemplate;
+    }
+    
+    public function GetAsset() 
+    {
+        return $this->objAsset;
+    }
 }

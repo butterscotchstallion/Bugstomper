@@ -1,9 +1,9 @@
 <?php
     use application\View as View;
-    $safeSearchQuery = View::Get('query');
-    $statusList      = View::Get('statusList');
-    $statusFilters   = View::Get('statusFilters');
-    $assignedFilter   = View::Get('assignedFilter');
+    $safeSearchQuery = $this->Get('query');
+    $statusList      = $this->Get('statusList');
+    $statusFilters   = $this->Get('statusFilters');
+    $assignedFilter   = $this->Get('assignedFilter');
 ?>
 
 <section id="issueListingFilterBar">

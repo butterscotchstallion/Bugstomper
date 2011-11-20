@@ -3,13 +3,9 @@
  * Comment - model for comments on issues
  *
  */
+namespace model;
 class Comment extends Model
-{
-	public function __construct($connection)
-	{
-		parent::__construct($connection);
-	}
-	
+{	
 	public function GetComments($issueID)
 	{
 		$q = 'SELECT c.text,
