@@ -4,13 +4,9 @@
  * with Flot charts based on Issue data
  * 
  */
+namespace model;
 class IssueReport extends Model
 {
-	public function __construct($connection)
-	{
-		parent::__construct($connection);
-	}
-	
 	public function GetIssueStatusDistribution()
 	{
 		$q = 'SELECT st.name AS label,

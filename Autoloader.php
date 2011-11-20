@@ -22,33 +22,15 @@ spl_autoload_register('autoload');
 function autoload($className)
 {
     $cn = str_replace("\\", DIRECTORY_SEPARATOR, $className);
-       
-	switch( $cn )
-	{
-		// ***********************************************************************
-        // TODO: Add these paths to the above array to eliminate the need for this
-		// switch statement
-		// ***********************************************************************   
-        
-        /*
-		// OpenID 
-		case 'LightOpenID':
-			require sprintf('%s/application/thirdparty/lightopenid/openid.php', 
-							str_replace('application', '', __DIR__));
-			return true;
-        */
-        
-		// Everything else
-		default:
-            $path = sprintf('%s/%s.class.php', APP_ROOT, $cn);
-  
-            if( is_readable($path) )
-            {
-                require $path;
-            }
-			
-			return true;
-	}
+
+    $path = sprintf('%s/%s.class.php', APP_ROOT, $cn);
+
+    if( is_readable($path) )
+    {
+        require $path;
+    }
+    
+    return true;
 }
 
 

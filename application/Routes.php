@@ -21,22 +21,22 @@ $objTemplate = new application\Template();
 $objView     = new application\View($objTemplate, $objAsset);
 
 // Enabled Modules
-$modules = array('module\\User', 'module\\Issue');
+$modules = array('module\\User', 
+                 'module\\Issue',
+                 'module\\PrettyGraphsAndStuff');
 
 /*
  * Each module returns a callback
  * and a corresponding route 
  *
  */
-$enabledModules = array();
 foreach( $modules as $key => $m )
 {
     // Supply dependencies to module
     $objModule = new $m();
     $objModule->SetView($objView);
     $objModule->SetConnection($connection);
-    $enabledModules[] = $objModule;
-    
+
     // Get routes from each module
     $routes = $objModule->GetRoutes();
     foreach( $routes as $k => $route )
