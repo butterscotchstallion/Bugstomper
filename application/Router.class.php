@@ -4,6 +4,8 @@
  *
  */
 namespace application;
+use module\NotFoundException as NotFoundException;
+
 class Router
 {
 	private $debug			   = false;
@@ -54,11 +56,13 @@ class Router
 		$callback     = $route && isset($route['callback']) ? $route['callback'] : false;
 		$beforeFilter = $route && isset($route['before']) ? $route['before'] : false;
 		
-		if( is_callable($beforeFilter) )
-		{
-			$beforeFilter();
-		}
-
+		if( is_array($beforeFilter) && count($beforeFilter) == 2 )
+        {
+            // TODO: maybe I should do something when/if this returns
+            // false
+            call_user_func($beforeFilter);
+        }
+        
 		// Callback found!
         if( is_array($callback) && count($callback) == 2 )
         {
@@ -70,19 +74,8 @@ class Router
             }
         }
         
-		// If there is a 404 handler, use it. if not, return false
-        $error404CB = $this->GetErrorHandler(404);
-		if( $error404CB )
-        {
-            $callbackResult = call_user_func($error404CB);
-            
-            if( $callbackResult )
-            {
-                return true;
-            }
-        }
-        
-		return false;
+        // Didn't find a valid callback, so resource is non-existent
+        throw new NotFoundException('Page not found');
 	}
 	
 	/*

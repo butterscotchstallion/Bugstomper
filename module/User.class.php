@@ -9,11 +9,15 @@ use application\UserSession as UserSession;
 use model\User as UserModel;
 use model\Issue as IssueModel;
 
-class User extends Module implements iModule
+class User extends Module
 {
     public function __construct()
     {
         $routes   = array();
+        
+        // Used to limit access to areas that require signed
+        // in users
+        $checkSignInCallback = array($this, 'CheckSignIn');
         
         // Sign in
         $routes[] = array('pattern'  => '#^/user/sign-in$#',
@@ -23,7 +27,7 @@ class User extends Module implements iModule
         $routes[] = array('pattern'  => '#^/user/authenticate/openid$#',
                           'callback' => array($this, 'AuthenticateUser'));
                           
-        // Set credentials            
+        // Set credentials    
         $routes[] = array('pattern' => '#^/user/setCredentials(.*)$#',
                           'callback' => array($this, 'SetCredentials'));
                           
@@ -35,11 +39,46 @@ class User extends Module implements iModule
         $routes[] = array('pattern' => '#^/user/sign-out$#',
                           'callback' => array($this, 'SignOut'));
                           
-        // Profile       
-        $routes['DisplayProfile'] = array('pattern' => '#^/user/(\d+)$#',
+        // Profile  
+        $routes['DisplayProfile'] = array('pattern'  => '#^/user/(\d+)$#',
+                                          'before'   => $checkSignInCallback,
                                           'callback' => array($this, 'DisplayProfile'));
                           
         $this->SetRoutes($routes);
+    }
+    
+    /*
+     * Used as a before filter to limit access
+     * to certain routes
+     *
+     */
+    public function CheckSignIn()
+    {
+        $objUserSession = new UserSession();
+        $userIdentity   = $objUserSession->UserID();
+        
+        if( $userIdentity )
+        {
+            // Auth using immediate mode
+            try
+            {
+                $objOpenID 			  = new LightOpenID(BS_DOMAIN);
+                $objOpenID->required  = array('namePerson/friendly', 'contact/email');
+                $objOpenID->identity  = sprintf('https://www.google.com/accounts/o8/id?site-xrds?hd=%s', BS_DOMAIN);
+                $objOpenID->returnUrl = sprintf('http://%s/user/setCredentials', BS_DOMAIN);
+                $objOpenID->authUrl($userIdentity);
+            }
+            catch(Exception $e)
+            {
+                header('Location: /user/sign-in');
+                die;
+            }
+        }
+        else
+        {
+            header('Location: /user/sign-in');
+            die;
+        }
     }
     
     public function DisplayProfile()
@@ -50,7 +89,7 @@ class User extends Module implements iModule
         preg_match_all($userProfilePattern, 
 					   $_SERVER['REQUEST_URI'], 
 					   $matches);
-		$userID = isset($matches[1][0]) ? $matches[1][0] : 0;
+		$userID  = isset($matches[1][0]) ? $matches[1][0] : 0;
         $objUser = new UserModel($this->GetConnection());
         $user    = $objUser->GetUserByID($userID);
         

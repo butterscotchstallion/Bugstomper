@@ -9,6 +9,8 @@ class View
 	private $tplVars = array();
 	private $objTemplate;
 	private $objAsset;
+    private $rootTitle = 'Bugstomper';
+    private $pageTitle = '';
     
     public function __construct($objTemplate, $objAsset)
     {
@@ -16,10 +18,29 @@ class View
         $this->objTemplate = $objTemplate;
     }
     
+    public function SetPageTitle($title)
+    {
+        $this->pageTitle = sprintf('%s - %s', 
+                                    $this->rootTitle,
+                                    $title);
+    }
+    
+    public function GetPageTitle()
+    {
+        return $this->pageTitle;
+    }
+    
+    public function Add($key, $value)
+    {
+        $this->tplVars[$key] = $value;
+    }
+    
 	public function Display($settings = array())
 	{
-		$tpl 	 	   = isset($settings['tpl']) ? $settings['tpl'] : false;
-		$this->tplVars = isset($settings['tplVars']) ? $settings['tplVars'] : array();
+		$tpl 	 	    = isset($settings['tpl']) ? $settings['tpl'] : false;
+        // Used += here because we don't want to overwrite any variables
+        // set before this method is called (such as user login!)
+		$this->tplVars += isset($settings['tplVars']) ? $settings['tplVars'] : array();
 		
 		if( $tpl )
 		{

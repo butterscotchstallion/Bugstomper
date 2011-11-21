@@ -6,11 +6,6 @@
 namespace model;
 class User extends Model
 {
-	public function __construct($connection)
-	{
-		parent::__construct($connection);
-	}
-	
 	public function Update($objUser)
 	{
 		$q    = 'UPDATE user

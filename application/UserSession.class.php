@@ -4,6 +4,7 @@
  *
  */
 namespace application;
+
 class UserSession
 {
 	public function SignIn($userInfo)
@@ -14,13 +15,11 @@ class UserSession
 			{
 				$_SESSION[$prop] = $val;
 			}
-
-			return true;
 		}
 		
-		return false;
+		return $userInfo;
 	}
-
+    
 	public function UserID()
 	{
 		return isset($_SESSION['userID']) ? $_SESSION['userID'] : '';

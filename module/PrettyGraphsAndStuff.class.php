@@ -6,7 +6,7 @@
 namespace module;
 use model\IssueReport as IssueReport;
 
-class PrettyGraphsAndStuff extends Module implements iModule
+class PrettyGraphsAndStuff extends Module
 {
     public function __construct()
     {
@@ -67,6 +67,7 @@ class PrettyGraphsAndStuff extends Module implements iModule
     /*
      * DisplayGraphData - displays graph data, sends
      * JSON header and dies.
+     *
      * @param object $jsonResultSet - json_encoded result set
      * @return null
      *

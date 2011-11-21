@@ -15,15 +15,17 @@ $userLogin 		= $objUserSession->UserLogin();
 $objAsset = new application\Asset();
 $objAsset->SetJSGroups(array('global'));
 
+// Provides various template functions, such
+// as HTML generation
 $objTemplate = new application\Template();
 
-// Pass necessary dependencies to View
+// Grouping related functionalities
 $objView     = new application\View($objTemplate, $objAsset);
 
 // Enabled Modules
-$modules = array('module\\User', 
-                 'module\\Issue',
-                 'module\\PrettyGraphsAndStuff');
+$modules = array('User', 
+                 'Issue',
+                 'PrettyGraphsAndStuff');
 
 /*
  * Each module returns a callback
@@ -33,10 +35,16 @@ $modules = array('module\\User',
 foreach( $modules as $key => $m )
 {
     // Supply dependencies to module
-    $objModule = new $m();
+    $moduleName = sprintf("module\\%s", $m);
+    $objModule  = new $moduleName();
     $objModule->SetView($objView);
     $objModule->SetConnection($connection);
-
+    $objModule->SetUserSession($objUserSession);
+    
+    // Template variables available to all routes
+    $objView->Add('userLogin', $userLogin);
+    $objView->Add('userIdentity', $userIdentity);
+    
     // Get routes from each module
     $routes = $objModule->GetRoutes();
     foreach( $routes as $k => $route )
@@ -49,14 +57,19 @@ foreach( $modules as $key => $m )
  * Dispatch routes
  *
  */
-$objHandler = new module\ErrorHandler();
-$objHandler->SetView($objView);
-$error404Callback = function() use($objHandler) 
+ 
+try
 {
+    // Load route
+    $objRouter->Route();
+}
+catch( module\NotFoundException $e )
+{
+    // Set up error handler
+    $objHandler = new module\ErrorHandler();
+    $objHandler->SetView($objView);
     $objHandler->ErrorNotFound();
-};
-$objRouter->SetErrorHandler(404, $error404Callback);
-$objRouter->Route();
+}
 
 
 

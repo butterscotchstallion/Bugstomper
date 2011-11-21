@@ -11,7 +11,7 @@ use model\Comment as CommentModel;
 use application\Util as Util;
 use application\Template as Template;
 
-class Issue extends Module implements iModule
+class Issue extends Module
 {
     private $objIssue;
     
@@ -141,6 +141,8 @@ class Issue extends Module implements iModule
         // List for assigned users
         $objUser     = new UserModel($this->GetConnection());
         $users		 = $objUser->GetUsers();
+        
+        $this->GetView()->SetPageTitle('Issues');
         
         return $this->GetView()->Display(array('tpl'     => '../view/Issue/IssuesList.template.php',
                                                'tplVars' => array('users'          => $users,

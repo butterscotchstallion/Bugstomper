@@ -4,11 +4,9 @@
  *
  */
 namespace module;
-class ErrorHandler extends Module implements iModule
+
+class ErrorHandler extends Module
 {
-    protected $view;
-    protected $routes;
-    
     public function __construct()
     {
         $routes   = array();
@@ -22,8 +20,8 @@ class ErrorHandler extends Module implements iModule
     
     public function ErrorNotFound()
     {
-        $tpl = array('tpl' => '../view/Error/404.template.php');
-        
-        return $this->GetView()->Display($tpl);
+        var_dump($this->GetView());
+        return $this->GetView()->Display(array('tpl' => '../view/Error/404.template.php'));
     }
 }
+
