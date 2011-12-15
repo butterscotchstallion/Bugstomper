@@ -1,9 +1,11 @@
 <?php
-    use application\View as View;
     $safeSearchQuery = $this->Get('query');
     $statusList      = $this->Get('statusList');
     $statusFilters   = $this->Get('statusFilters');
-    $assignedFilter   = $this->Get('assignedFilter');
+    $assignedFilter  = $this->Get('assignedFilter');
+    $issueSeverity   = $this->Get('issueSeverity');
+    $users           = $this->Get('users');
+    $severityFilter  = $this->Get('severityFilter');
 ?>
 
 <section id="issueListingFilterBar">

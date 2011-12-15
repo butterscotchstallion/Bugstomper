@@ -36,8 +36,8 @@ class PrettyGraphsAndStuff extends Module
     
     public function StatusIndex()
     {
-        $this->GetView()->GetAsset()->AddJS('report');	
-        return $this->GetView()->Display(array('tpl' => '../view/Report/IssueStatus.template.php'));
+        $this->GetView()->AddJS('report');	
+        $this->GetView()->Display(array('tpl' => '../view/Report/IssueStatus.template.php'));
     }
     
     public function OpenerDistribution()

@@ -4,14 +4,14 @@
  *
  */
 namespace application;
-use module\NotFoundException as NotFoundException;
+use application\exception\NotFoundException as NotFoundException;
 
 class Router
 {
-	private $debug			   = false;
-	private $errorHandlers     = array();
-	private $routes 		   = array();
-	private $routeInfo		   = array();
+	private $debug		   = false;
+	private $errorHandlers = array();
+	private $routes 	   = array();
+	private $routeInfo	   = array();
 	
 	public function __construct()
 	{
@@ -68,14 +68,15 @@ class Router
         {
             $callbackResult = call_user_func($callback);
             
+            var_dump($callbackResult);
+            
             if( $callbackResult )
             {
                 return true;
             }
         }
         
-        // Didn't find a valid callback, so resource is non-existent
-        throw new NotFoundException('Page not found');
+        return false;
 	}
 	
 	/*
@@ -119,10 +120,10 @@ class Router
 	{
 		$method		 = strtoupper($_SERVER['REQUEST_METHOD']);
 		$scheme      = isset($parts['scheme'])  ? strtolower($parts['scheme']) : 'http';
-
-		return array('method'  => $method,
-					 'path'    => $_SERVER['REQUEST_URI'],
-					 'scheme'  => $scheme);
+        
+		return array('method' => $method,
+					 'path'   => $_SERVER['REQUEST_URI'],
+					 'scheme' => $scheme);
 	}
 
 	public function SetDebug($debug)

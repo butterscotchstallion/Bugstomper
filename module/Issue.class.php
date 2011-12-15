@@ -2,30 +2,31 @@
 /*
  * Issue Module - handles controller actions for issues
  *
- *
  */
 namespace module;
-use model\User as UserModel;
-use model\Issue as IssueModel;
-use model\Comment as CommentModel;
-use application\Util as Util;
+use model\User           as UserModel;
+use application\Util     as Util;
+use model\Issue          as IssueModel;
+use model\Comment        as CommentModel;
 use application\Template as Template;
 
 class Issue extends Module
 {
-    private $objIssue;
-    
     public function __construct()
     {
-        $routes   = array();
+        $routes = array();
+        
+        $checkSignInCallback = array($this, 'CheckSignIn');
         
         // Edit issue
         $routes['EditIssue'] = array('pattern'  => '#^/issues/(\d+)/(.*)/edit$#',
                                      'method'   => 'POST',
+                                     'before'   => $checkSignInCallback,
                                      'callback' => array($this, 'EditIssue'));
                                      
         // Display edit issue
         $routes['DisplayEditIssue'] = array('pattern'  => '#^/issues/(\d+)/(.*)/edit$#',
+                                            'before'   => $checkSignInCallback,
                                             'callback' => array($this, 'DisplayEditIssue'));
                                             
         // Display specific issue
@@ -45,9 +46,9 @@ class Issue extends Module
         $objOld   = isset($_POST['old']) ? (object) $_POST['old'] : false;
         $return   = isset($_POST['returnTo']) ? $_POST['returnTo'] : '';
         
-        $objIssue   = new IssueModel($this->GetConnection());
+        $objIssue = new IssueModel($this->GetConnection());
         $newBugID = $objIssue->Update($objNew, $objOld);
-
+        
         header('HTTP 1.1 202 Accepted');
         header(sprintf('Location: %s', $return));
         die;
@@ -72,7 +73,7 @@ class Issue extends Module
 		// List for assigned users
 		$objUser     = new UserModel($this->GetConnection());
 		$users		 = $objUser->GetUsers();
-
+        
 		// Issue comments
 		$objComment    = new CommentModel($this->GetConnection());
 		$issueComments = $objComment->GetComments($id); 
@@ -98,13 +99,12 @@ class Issue extends Module
                        $matches);
  
         // Get issue
-        $objIssue  	 = new IssueModel($this->GetConnection());
-        $id		 	 = isset($matches[1][0]) ? intval($matches[1][0]) : 0;
-        $issue     	 = $objIssue->GetIssueByID($id);
+        $objIssue  	   = new IssueModel($this->GetConnection());
+        $id		 	   = isset($matches[1][0]) ? intval($matches[1][0]) : 0;
+        $issue     	   = $objIssue->GetIssueByID($id);
 
         // Change log
         $changelog     = $objIssue->GetIssueChangeLog($id);
-        $objTpl 	   = new Template();
         $issueSeverity = $objIssue->GetSeverity();
         $issueStatus   = $objIssue->GetStatus();
 
@@ -117,7 +117,6 @@ class Issue extends Module
                                                                   'readOnly'      => true,
                                                                   'issueStatus'   => $issueStatus,
                                                                   'issueSeverity' => $issueSeverity,
-                                                                  'objTpl'        => $objTpl,
                                                                   'issue'         => $issue)));
     }
     
@@ -132,15 +131,15 @@ class Issue extends Module
         $assignedFilter = isset($_GET['a']) ? intval($_GET['a']) : '';
         
         // Get issues with filters
-        $filters       = array('query'    => $query,
-                               'status'   => $statusFilters,
-                               'severity' => $severityFilter,
-                               'assigned' => $assignedFilter);
-        $issues        = $objIssue->GetIssues($filters);
+        $filters        = array('query'    => $query,
+                                'status'   => $statusFilters,
+                                'severity' => $severityFilter,
+                                'assigned' => $assignedFilter);
+        $issues         = $objIssue->GetIssues($filters);
         
         // List for assigned users
-        $objUser     = new UserModel($this->GetConnection());
-        $users		 = $objUser->GetUsers();
+        $objUser        = new UserModel($this->GetConnection());
+        $users		    = $objUser->GetUsers();
         
         $this->GetView()->SetPageTitle('Issues');
         

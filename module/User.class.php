@@ -4,10 +4,12 @@
  *
  */
 namespace module;
-use application\thirdparty\LightOpenID as LightOpenID;
-use application\UserSession as UserSession;
-use model\User as UserModel;
-use model\Issue as IssueModel;
+use application\exception\NotFoundException as NotFoundException;
+use application\thirdparty\LightOpenID      as LightOpenID;
+use application\UserSession                 as UserSession;
+use model\User                              as UserModel;
+use model\Issue                             as IssueModel;
+use model\OpenIDUser                        as OpenIDUserModel;
 
 class User extends Module
 {
@@ -19,6 +21,19 @@ class User extends Module
         // in users
         $checkSignInCallback = array($this, 'CheckSignIn');
         
+        // Account created successfully        
+        $routes[] = array('pattern'  => '#^/user/account-successfully-created$#',
+                          'callback' => array($this, 'AccountCreatedSuccessfully'));
+        
+        // New account (POST)
+        $routes[] = array('pattern'  => '#^/user/new-account$#',
+                          'method'   => 'POST',
+                          'callback' => array($this, 'CreateNewAccount'));
+        
+        // New account (GET)
+        $routes[] = array('pattern'  => '#^/user/new-account$#',
+                          'callback' => array($this, 'DisplayNewAccount'));
+                          
         // Sign in
         $routes[] = array('pattern'  => '#^/user/sign-in$#',
                           'callback' => array($this, 'DisplaySignIn'));
@@ -48,37 +63,12 @@ class User extends Module
     }
     
     /*
-     * Used as a before filter to limit access
-     * to certain routes
+     * Displayed after creating a new account
      *
      */
-    public function CheckSignIn()
+    public function AccountCreatedSuccessfully()
     {
-        $objUserSession = new UserSession();
-        $userIdentity   = $objUserSession->UserID();
-        
-        if( $userIdentity )
-        {
-            // Auth using immediate mode
-            try
-            {
-                $objOpenID 			  = new LightOpenID(BS_DOMAIN);
-                $objOpenID->required  = array('namePerson/friendly', 'contact/email');
-                $objOpenID->identity  = sprintf('https://www.google.com/accounts/o8/id?site-xrds?hd=%s', BS_DOMAIN);
-                $objOpenID->returnUrl = sprintf('http://%s/user/setCredentials', BS_DOMAIN);
-                $objOpenID->authUrl($userIdentity);
-            }
-            catch(Exception $e)
-            {
-                header('Location: /user/sign-in');
-                die;
-            }
-        }
-        else
-        {
-            header('Location: /user/sign-in');
-            die;
-        }
+        $this->GetView()->Display(array('tpl' => '../view/User/AccountCreatedSuccessfully.template.php'));
     }
     
     public function DisplayProfile()
@@ -96,8 +86,7 @@ class User extends Module
         // User not found
         if( ! $user )
         {
-            header('Location: /404');
-            die;
+            throw new NotFoundException();
         }
         
         // Get user profile information
@@ -105,10 +94,10 @@ class User extends Module
         $openedIssues   = $objIssue->GetIssuesOpenedByUser($userID);
         $assignedIssues = $objIssue->GetIssuesAssignedToUser($userID);
         
-        return $this->GetView()->Display(array('tpl'     => '../view/User/UserProfile.template.php',
-                                               'tplVars' => array('openedIssues'   => $openedIssues,
-                                                                  'assignedIssues' => $assignedIssues,
-                                                                  'user'           => $user)));
+        $this->GetView()->Display(array('tpl'     => '../view/User/UserProfile.template.php',
+                                        'tplVars' => array('openedIssues'   => $openedIssues,
+                                                           'assignedIssues' => $assignedIssues,
+                                                           'user'           => $user)));
     }
     
     public function SignOut()
@@ -120,9 +109,11 @@ class User extends Module
     
     public function AuthCancel()
     {
-        return $this->GetView()->Display(array('tpl' => '../view/User/UserAuthCancel.template.php'));
+        $this->GetView()->Display(array('tpl' => '../view/User/UserAuthCancel.template.php'));
     }
     
+    // This step occurs after the OpenID provider
+    // asks the user for permission
     public function SetCredentials()
     {
         // Check if logged in
@@ -136,12 +127,32 @@ class User extends Module
         // Sign in successful
         if( $userSignedIn && $claimedID && $userLogin )
         {
-            $objUserSession = new UserSession();
-            $objUserSession->SignIn(array('userID'    => $claimedID,
-                                          'userLogin' => $userLogin));
-                                          
-            header('Location: /issues');
-            die;
+            // See if a user is associated with this openID
+            $objUser = new UserModel($this->GetConnection());
+            $user    = $objUser->GetUserByOpenID($identity);
+            
+            // Store OpenID info
+            $this->GetUserSession()->SetOpenID($identity);
+            
+            // User exists
+            if( $user )
+            {
+                $this->GetUserSession()->SignIn(array('userID'    => $user->id,
+                                                      'userLogin' => $userLogin));
+                
+                header('Location: /issues');
+                die;
+            }
+            /*
+             * - Can't find user
+             * - Create new account
+             *
+             */
+            else
+            {
+                header('Location: /user/new-account');
+                die;
+            }
         }
         // Something went wrong
         else
@@ -157,11 +168,13 @@ class User extends Module
      */
     public function DisplaySignIn()
     {
-        return $this->GetView()->Display(array('tpl' => '../view/User/UserSignIn.template.php'));
+        $this->GetView()->Display(array('tpl' => '../view/User/UserSignIn.template.php'));
     }
     
     /*
      * Authenticates using OpenID
+     * 1. Auth with provider
+     * 2. Return to setCredentials to set session info
      *
      */
     public function AuthenticateUser()
@@ -172,11 +185,12 @@ class User extends Module
             
             switch( $objOpenID->mode )
             {
+                // If user does not allow permission
                 case 'cancel':
                     header('Location: /user/authenticate/cancel');
                     die;
-                break;
                 
+                // Proceed!
                 default:
                     $objOpenID->required  = array('namePerson/friendly', 'contact/email');
                     $objOpenID->identity  = sprintf('https://www.google.com/accounts/o8/id?site-xrds?hd=%s', BS_DOMAIN);
@@ -185,9 +199,66 @@ class User extends Module
                     die;
             }
         }
-        catch(Exception $e)
+        catch(Exception $e) 
         {
             die($e->getMessage());
         }
+    }
+    
+    // POST - submitting the form that creates a new account
+    // using an OpenID
+    public function CreateNewAccount()
+    {
+        $openIDURI = $this->GetUserSession()->GetOpenID();
+        $friendly  = $this->GetUserSession()->UserLogin();
+        
+        // If user doesn't have an OpenID, then they didn't sign
+        // in and don't belong here
+        if( ! $openIDURI )
+        {
+            header('Location: /user/sign-in');
+            die;
+        }
+        
+        // Create base user account and then associate it with
+        // the OpenID
+        $user           = new \StdClass();
+        $user->login    = $friendly;
+        $user->password = '';
+        $objUser        = new UserModel($this->GetConnection());
+        $userID         = $objUser->Add($user);
+        
+        // User created successfully
+        if( $userID )
+        {
+            $objOpenIDUser = new OpenIDUserModel($this->GetConnection());
+            $objOpenIDUser->Add(array('userID'   => $userID,
+                                      'friendly' => $friendly,
+                                      'uri'      => $openIDURI));
+            
+            
+            header('Location: /user/account-successfully-created');
+            die;
+        }
+        
+        // Error creating user
+        throw new CriticalException('Error creating user');
+    }
+    
+    // Create new account using openID credentials
+    public function DisplayNewAccount()
+    {
+        $openID = $this->GetUserSession()->GetOpenID();
+        
+        // If user doesn't have an OpenID, then they didn't sign
+        // in and don't belong here
+        if( ! $openID )
+        {
+            header('Location: /user/sign-in');
+            die;
+        }
+        
+        $this->GetView()->Display(array('tpl'     => '../view/User/NewAccount.template.php',
+                                        'tplVars' => array('openID' => $openID)));
     }
 }

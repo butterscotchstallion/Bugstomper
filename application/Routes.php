@@ -3,30 +3,28 @@
  * Routes - configure mapping of URLs to resources
  *
  */
-$objRouter = new application\Router();	
-$objRouter->SetDebug(true);
+use application\View                        as View;
+use application\HTTPResponse                as HTTPResponse;
+use application\UserSession                 as UserSession;
+use application\Router                      as Router;
+use module\ErrorHandler                     as ErrorHandler;
+use application\exception\NotFoundException as NotFoundException;
 
-// User tracking
-$objUserSession = new application\UserSession();
+$objRouter      = new Router();	
+
+$objUserSession = new UserSession();
 $userIdentity   = $objUserSession->UserID();
 $userLogin 		= $objUserSession->UserLogin();
 
-// Asset management
-$objAsset = new application\Asset();
-$objAsset->SetJSGroups(array('global'));
-
-// Provides various template functions, such
-// as HTML generation
-$objTemplate = new application\Template();
-
-// Grouping related functionalities
-$objView     = new application\View($objTemplate, $objAsset);
+$objView        = new View();
+$objView->AddCSS('globalCSS');
+$objView->AddJS('globalJS');
 
 // Enabled Modules
 $modules = array('User', 
                  'Issue',
                  'PrettyGraphsAndStuff');
-
+                 
 /*
  * Each module returns a callback
  * and a corresponding route 
@@ -40,34 +38,49 @@ foreach( $modules as $key => $m )
     $objModule->SetView($objView);
     $objModule->SetConnection($connection);
     $objModule->SetUserSession($objUserSession);
+    $objModule->SetHTTPResponse(new HTTPResponse());
     
-    // Template variables available to all routes
+    // Template variables available to all modules
     $objView->Add('userLogin', $userLogin);
     $objView->Add('userIdentity', $userIdentity);
     
     // Get routes from each module
-    $routes = $objModule->GetRoutes();
+    $routes     = $objModule->GetRoutes();
     foreach( $routes as $k => $route )
     {
         $objRouter->AddRoute($route);
     }
 }
 
+
 /*
  * Dispatch routes
  *
  */
- 
 try
 {
-    // Load route
-    $objRouter->Route();
-}
-catch( module\NotFoundException $e )
-{
     // Set up error handler
-    $objHandler = new module\ErrorHandler();
+    $objHandler = new ErrorHandler();
     $objHandler->SetView($objView);
+    $objHandler->SetHTTPResponse(new HTTPResponse());
+    
+    // Load route
+    $routeLoaded = $objRouter->Route();
+    
+    // No matching routes or callback is invalid
+    if( ! $routeLoaded )
+    {
+        //throw new NotFoundException('Page not found');
+    }
+}
+// 500
+catch( CriticalException $e )
+{
+    $objHandler->ErrorCritical();
+}
+// 404
+catch( NotFoundException $e )
+{
     $objHandler->ErrorNotFound();
 }
 

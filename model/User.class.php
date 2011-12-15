@@ -42,15 +42,16 @@ class User extends Model
 		return $this->FetchAll($q);
 	}
 	
-	public function GetUserByOpenID($url)
+	public function GetUserByOpenID($identity)
 	{
-		$q    = 'SELECT u.login,
+		$q    = 'SELECT u.id,
+                        u.login,
 						u.created_at AS createdAt,
 						o.friendly_name AS friendlyName
 				 FROM user u
 				 INNER JOIN openid_account o ON o.user_id = u.id
-				 WHERE o.url = :url';
-		return $this->Fetch($q, array(':url' => $url));
+				 WHERE o.uri = :identity';
+		return $this->Fetch($q, array(':identity' => $identity));
 	}
 }
 

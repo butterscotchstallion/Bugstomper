@@ -12,9 +12,15 @@
 	<meta name="description" content="Bug Tracker">
 	<meta name="author" content="PrgmrBill">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<link rel="stylesheet" href="/assets/css/style.css">
-	<link rel="stylesheet" href="/assets/css/jquery.qtip.min.css">
-	<link rel="stylesheet" href="/assets/css/mint-choc/jquery-ui-1.8.16.custom.css">
+    <?php 
+	$cssGroups = $this->GetCSS();
+	if( $cssGroups ):
+    ?>
+        <link rel="stylesheet" 
+              type="text/css"
+              media="screen"
+              href="/min/?g=<?php echo $cssGroups;?>">
+    <?php endif;?>
 </head>
 <?php flush();?>
 <body>

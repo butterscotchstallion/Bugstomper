@@ -4,18 +4,19 @@
  *
  */
 namespace application;
+
 class View
 {
-	private $tplVars = array();
-	private $objTemplate;
-	private $objAsset;
+	private $tplVars   = array();
     private $rootTitle = 'Bugstomper';
     private $pageTitle = '';
+    private $assets    = array();
+    private $objUserSession;
     
-    public function __construct($objTemplate, $objAsset)
+    public function __construct()
     {
-        $this->objAsset    = $objAsset;
-        $this->objTemplate = $objTemplate;
+        $this->assets['js']  = array();
+        $this->assets['css'] = array();
     }
     
     public function SetPageTitle($title)
@@ -30,9 +31,23 @@ class View
         return $this->pageTitle;
     }
     
+    /*
+     * Add template variable
+     *
+     */
     public function Add($key, $value)
     {
         $this->tplVars[$key] = $value;
+    }
+    
+    public function DisplayHeader()
+    {
+        require realpath('../view/Global/Header.template.php');
+    }
+    
+    public function DisplayFooter()
+    {
+        require realpath('../view/Global/Footer.template.php');
     }
     
 	public function Display($settings = array())
@@ -56,6 +71,10 @@ class View
 		return false;
 	}
 
+    /*
+     * Get template variable
+     *
+     */
 	public function Get($key)
 	{
 		$tplVars = isset($this->tplVars[$key]) ? $this->tplVars[$key] : '';
@@ -73,13 +92,97 @@ class View
 		return htmlentities($input, ENT_COMPAT, 'UTF-8');
 	}
     
-    public function GetTemplate() 
+    public function AddJS($groupName)
     {
-        return $this->objTemplate;
+        $this->assets['js'][] = $groupName;
     }
     
-    public function GetAsset() 
+    public function AddCSS($groupName)
     {
-        return $this->objAsset;
+        $this->assets['css'][] = $groupName;
     }
+    
+    public function GetJS()
+	{
+		return $this->assets['js'] ? implode(',', $this->assets['js']) : false;
+	}
+    
+    public function GetCSS()
+	{
+		return $this->assets['css'] ? implode(',', $this->assets['css']) : false;
+	}
+    
+    public function Input($attributes)
+	{
+		$value         = isset($attributes['value']) ? $attributes['value'] : '';
+		$type          = isset($attributes['type']) ? $attributes['type'] : '';
+		$textProperty  = isset($attributes['textProperty']) ? $attributes['textProperty'] : '';
+		$valueProperty = isset($attributes['valueProperty']) ? $attributes['valueProperty'] : '';
+		$readOnly      = isset($attributes['readOnly']) ? $attributes['readOnly'] : false;
+		$options	   = isset($attributes['options']) ? $attributes['options'] : array();
+		$selected      = isset($attributes['selected']) ? $attributes['selected'] : '';
+		$class         = isset($attributes['class']) ? $attributes['class'] : array();
+		$defaultText   = isset($attributes['defaultText']) ? $attributes['defaultText'] : '';
+		$title         = isset($attributes['title']) ? $attributes['title'] : '';
+		
+		// Build attribute string
+		$attrString    = $this->BuildAttributeString($attributes);
+		
+		switch( $type )
+		{
+			case 'select':
+				include '../view/Form/select.template.php';
+			break;
+			
+			case 'text':
+				include '../view/Form/text.template.php';
+			break;
+			
+			case 'textarea':
+				include '../view/Form/textarea.template.php';
+			break;
+		}
+	}
+	
+	public function BuildAttributeString($attributes)
+	{
+		if( $attributes )
+		{
+			$output = '';
+			$type   = isset($attributes['type']) ? $attributes['type'] : 'text';
+			
+			// Some of these attributes are only for certain
+			// tags: e.g. type for inputs but not for textarea
+			$allowedKeys = array('type', 
+								 'class', 
+								 'name', 
+								 'id',
+								 'value');
+			
+			foreach( $attributes as $key => $value )
+			{
+				// Select tags don't need this
+				if( $type == 'select' && ($key == 'type' || $key == 'value') )
+				{
+					continue;
+				}
+				
+				if( $key == 'class' )
+				{
+					$value = implode(' ', $value);
+				}
+				
+				if( ! in_array($key, $allowedKeys) )
+				{
+					continue;
+				}
+				
+				$output .= sprintf(' %s="%s" ', $key, $value);
+			}
+			
+			return $output;
+		}
+		
+		return false;
+	}
 }

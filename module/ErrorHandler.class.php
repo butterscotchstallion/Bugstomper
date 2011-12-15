@@ -18,10 +18,18 @@ class ErrorHandler extends Module
         $this->SetRoutes($routes);
     }
     
+    // 404
     public function ErrorNotFound()
     {
-        var_dump($this->GetView());
-        return $this->GetView()->Display(array('tpl' => '../view/Error/404.template.php'));
+        $this->GetHTTPResponse()->Send(404);
+        $this->GetView()->Display(array('tpl' => '../view/Error/404.template.php'));
+    }
+    
+    // 500
+    public function ErrorCritical()
+    {
+        $this->GetHTTPResponse()->Send(500);
+        $this->GetView()->Display(array('tpl' => '../view/Error/500.template.php'));
     }
 }
 

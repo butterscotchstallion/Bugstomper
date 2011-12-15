@@ -1,5 +1,5 @@
 <?php 
-	require '../view/Global/Header.template.php';
+	$this->DisplayHeader();
     $user           = $this->Get('user');
 	$userLogin      = htmlentities($user->login);
     $assignedIssues = $this->Get('assignedIssues');
@@ -46,5 +46,5 @@ if($openedIssues):
 
 
 
-<?php require '../view/Global/Footer.template.php';?>
+<?php $this->DisplayFooter();?>
 	

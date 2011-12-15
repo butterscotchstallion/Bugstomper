@@ -116,7 +116,7 @@ abstract class Model
 			$updateResult = $stmt || ($stmt && $stmt->rowCount() > 0);
 			$insertResult = $this->connection->lastInsertId();
 			
-			return $this->IsInsertQuery($query) ? $insertResult : $updateResult;
+			return $this->IsInsertQuery($query) ? intval($insertResult) : $updateResult;
 		}
 		catch(PDOException $e)
 		{

@@ -12,13 +12,17 @@
  **/
 
 return array(
-    // 'js' => array('//js/file1.js', '//js/file2.js'),
-    // 'css' => array('//css/file1.css', '//css/file2.css'),
-	
-	'global' => array(
+    'globalCSS' => array(
+        '//assets/css/style.css',
+        '//assets/css/jquery.qtip.min.css',
+        
+    ),
+    
+	'globalJS' => array(
 		'//assets/js/jquery-1.7.min.js',
 		'//assets/js/jquery.timeago.js',
-		'//assets/js/jquery.qtip.min.js'
+		'//assets/js/jquery.qtip.min.js',
+        '//assets/js/module/global/init.js'
 	),
 	
 	'report' => array(

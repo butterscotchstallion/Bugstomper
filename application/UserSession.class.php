@@ -20,6 +20,16 @@ class UserSession
 		return $userInfo;
 	}
     
+    public function SetOpenID($id)
+    {
+        $_SESSION['openID'] = $id;
+    }
+
+    public function GetOpenID()
+    {
+        return isset($_SESSION['openID']) ? $_SESSION['openID'] : '';
+    }
+    
 	public function UserID()
 	{
 		return isset($_SESSION['userID']) ? $_SESSION['userID'] : '';
