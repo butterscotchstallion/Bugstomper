@@ -33,7 +33,7 @@ abstract class Model
 	 */
 	protected function GenerateChangeLog($objOld, $objNew)
 	{
-		$objChange = new StdClass();
+		$objChange = new \StdClass();
 		
 		foreach( $objOld as $k => $o )
 		{
@@ -74,8 +74,7 @@ abstract class Model
 		}
 		catch(PDOException $e)
 		{
-			echo $e->getMessage();
-			return false;
+			$this->HandleException($e);
 		}
 	}
 	
@@ -88,8 +87,7 @@ abstract class Model
 		}
 		catch(PDOException $e)
 		{
-			echo $e->getMessage();
-			return false;
+			$this->HandleException($e);
 		}
 	}
 	
@@ -103,8 +101,7 @@ abstract class Model
 		}
 		catch(PDOException $e)
 		{
-			echo $e->getMessage();
-			return false;
+			$this->HandleException($e);
 		}
 	}
 	
@@ -120,8 +117,7 @@ abstract class Model
 		}
 		catch(PDOException $e)
 		{
-			echo $e->getMessage();
-			return false;
+			$this->HandleException($e);
 		}
 	}
 	
@@ -129,4 +125,9 @@ abstract class Model
 	{
 		return strpos(strtolower($query), 'insert') === 0;
 	}
+    
+    protected function HandleException($e)
+    {
+        throw new \RuntimeException($e->getMessage());
+    }
 }
