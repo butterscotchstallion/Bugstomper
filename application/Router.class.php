@@ -56,25 +56,23 @@ class Router
 		$callback     = $route && isset($route['callback']) ? $route['callback'] : false;
 		$beforeFilter = $route && isset($route['before']) ? $route['before'] : false;
 		
-		if( is_array($beforeFilter) && count($beforeFilter) == 2 )
+		if( $beforeFilter )
         {
-            // TODO: maybe I should do something when/if this returns
-            // false
+            // TODO: maybe do something when/if this returns false
             call_user_func($beforeFilter);
         }
         
 		// Callback found!
-        if( is_array($callback) && count($callback) == 2 )
+        if( $callback )
         {
             $callbackResult = call_user_func($callback);
             
-            var_dump($callbackResult);
-            
-            if( $callbackResult )
+            // Returns the function result, or FALSE on error
+            if( $callbackResult !== false )
             {
                 return true;
             }
-        }
+        } 
         
         return false;
 	}
