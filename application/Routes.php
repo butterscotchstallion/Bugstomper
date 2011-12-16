@@ -11,7 +11,6 @@ use module\ErrorHandler                     as ErrorHandler;
 use application\exception\NotFoundException as NotFoundException;
 
 $objRouter      = new Router();	
-
 $objUserSession = new UserSession();
 $userIdentity   = $objUserSession->UserID();
 $userLogin 		= $objUserSession->UserLogin();
@@ -52,7 +51,6 @@ foreach( $modules as $key => $m )
     }
 }
 
-
 /*
  * Dispatch routes
  *
@@ -70,20 +68,13 @@ try
     // No matching routes or callback is invalid
     if( ! $routeLoaded )
     {
-        //throw new NotFoundException('Page not found');
+        $objHandler->ErrorNotFound();
     }
 }
-// 500
-catch( CriticalException $e )
+catch( \RuntimeException $e )
 {
     $objHandler->ErrorCritical();
 }
-// 404
-catch( NotFoundException $e )
-{
-    $objHandler->ErrorNotFound();
-}
-
 
 
 
