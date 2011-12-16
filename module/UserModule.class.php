@@ -4,14 +4,13 @@
  *
  */
 namespace module;
-use application\exception\NotFoundException as NotFoundException;
 use application\thirdparty\LightOpenID      as LightOpenID;
 use application\UserSession                 as UserSession;
 use model\User                              as UserModel;
 use model\Issue                             as IssueModel;
 use model\OpenIDUser                        as OpenIDUserModel;
 
-class User extends Module
+class UserModule extends BaseModule
 {
     public function __construct()
     {
@@ -201,7 +200,7 @@ class User extends Module
         }
         catch(Exception $e) 
         {
-            die($e->getMessage());
+            throw new \RuntimeException($e);
         }
     }
     
@@ -243,7 +242,7 @@ class User extends Module
         }
         
         // Error creating user
-        throw new CriticalException('Error creating user');
+        throw new \RuntimeException('Error creating user');
     }
     
     // Create new account using openID credentials

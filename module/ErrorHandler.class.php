@@ -5,7 +5,7 @@
  */
 namespace module;
 
-class ErrorHandler extends Module
+class ErrorHandler extends BaseModule
 {
     public function __construct()
     {
@@ -26,8 +26,10 @@ class ErrorHandler extends Module
     }
     
     // 500
-    public function ErrorCritical()
+    public function ErrorCritical($exception)
     {
+        // TODO: log exception
+        
         $this->GetHTTPResponse()->Send(500);
         $this->GetView()->Display(array('tpl' => '../view/Error/500.template.php'));
     }

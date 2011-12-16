@@ -1,6 +1,6 @@
 <?php
 /*
- * Comment - model for comments on issues
+ * Comment - issue comments
  *
  */
 namespace model;
@@ -19,4 +19,25 @@ class Comment extends Model
 			  WHERE i.id = :issueID';
 		return $this->FetchAll($q, array('issueID' => intval($issueID)));
 	}
+    
+    /**
+     * Adds a comment
+     * @param object $objComment
+     *
+     * text    - comment text
+     * userID  - author of comment
+     * issueID - issue to add a commment on
+     *
+     */
+    public function Add($objComment)
+    {
+        $q = 'INSERT INTO issue_comment(issue_id,
+                                        text,
+                                        created_at,
+                                        created_by)
+              VALUES(:issueID,:text,CURDATE(),:userID)';
+        return $this->Save($q, array(':issueID' => intval($objComment->issueID),
+                                     ':text'    => $objComment->text,
+                                     ':userID'  => intval($objComment->userID)));
+    }
 }

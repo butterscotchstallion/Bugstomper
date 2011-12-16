@@ -8,9 +8,8 @@ use model\User           as UserModel;
 use application\Util     as Util;
 use model\Issue          as IssueModel;
 use model\Comment        as CommentModel;
-use application\Template as Template;
 
-class Issue extends Module
+class IssueModule extends BaseModule
 {
     public function __construct()
     {
@@ -46,11 +45,20 @@ class Issue extends Module
         $objOld   = isset($_POST['old']) ? (object) $_POST['old'] : false;
         $return   = isset($_POST['returnTo']) ? $_POST['returnTo'] : '';
         
+        // Update issue
         $objIssue = new IssueModel($this->GetConnection());
         $newBugID = $objIssue->Update($objNew, $objOld);
         
+        // Update comment
+        $objComment          = new CommentModel($this->GetConnection());
+        $text                = isset($_POST['issueComment']) ? $_POST['issueComment'] : '';
+        $objComment->text    = $text;
+        $objComment->userID  = $this->GetUserSession()->UserID();
+        $objComment->issueID = $objNew->id;
+        $commentID           = $objComment->Add($objComment);
+        
         // Error editing issue
-        if( ! $newBugID )
+        if( ! $newBugID || ! $commentID )
         {
             throw new \RuntimeException(sprintf('Error editing issue #%d', $objNew->id));
         }

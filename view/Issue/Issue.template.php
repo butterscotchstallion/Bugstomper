@@ -165,7 +165,7 @@ if( $issue ):
 				</td>
 			</tr>
 			<?php endif;?>
-			
+
 			<tr>
 				<td class="issueInfoLbl">Comments</td>
 				<td class="issueInfoValue" colspan="2">
@@ -175,14 +175,16 @@ if( $issue ):
 						<p style="margin: 0 0 1em 0">
                             No comments 
                             &mdash; 
-                            <a href="?addcomment=1" title="Add a comment">Add a comment</a>
+                            <a href="<?php echo $editLink;?>#issueComment" title="Add a comment">Add a comment</a>
                         </p>
 					<?php endif;?>
                     
                     <?php 
-                    if(isset($_GET['addcomment'])):
+                    if( ! $readOnly ):
+                        // Comment box
                         echo $this->Input(array('type' 	 => 'textarea',
-                                                'name'     => 'comment',
+                                                'name'     => 'issueComment',
+                                                'id'   => 'issueComment',
                                                 'placeholder' => 'Type something awesome here',
                                                 'readOnly' => false,
                                                 'class'    => array('issueDescriptionArea')));
@@ -193,10 +195,10 @@ if( $issue ):
 		</table>
 	</section>
 	
-	<?php if( ! $readOnly ):?>
-		</form>
-	<?php endif;?>
-	
+    <?php if( ! $readOnly ):?>
+        </form>
+    <?php endif;?>
+
 <?php else: ?>
 	<h1>Issue Not Found!</h1>
 	<p>Sorry, but we couldn't find that issue.</p>

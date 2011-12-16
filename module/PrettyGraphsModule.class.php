@@ -6,7 +6,7 @@
 namespace module;
 use model\IssueReport as IssueReport;
 
-class PrettyGraphsAndStuff extends Module
+class PrettyGraphsModule extends BaseModule
 {
     public function __construct()
     {

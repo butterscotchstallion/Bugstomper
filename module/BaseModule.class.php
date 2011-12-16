@@ -1,10 +1,10 @@
 <?php
 /*
- * Module - parent class for all modules
+ * BaseModule - base class for all modules
  *
  */
 namespace module;
-abstract class Module 
+abstract class BaseModule 
 {
     private $routes = array();
     private $view;

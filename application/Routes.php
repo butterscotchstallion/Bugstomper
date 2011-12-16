@@ -21,9 +21,9 @@ $objView->AddCSS('globalCSS');
 $objView->AddJS('globalJS');
 
 // Enabled Modules
-$modules = array('User', 
-                 'Issue',
-                 'PrettyGraphsAndStuff');
+$modules = array('UserModule', 
+                 'IssueModule',
+                 'PrettyGraphsModule');
                  
 /*
  * Each module returns a callback
@@ -74,7 +74,7 @@ try
 }
 catch( \RuntimeException $e )
 {
-    $objHandler->ErrorCritical();
+    $objHandler->ErrorCritical($e);
 }
 
 
