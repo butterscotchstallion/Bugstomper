@@ -24,7 +24,12 @@ class UserSession
     {
         $_SESSION['openID'] = $id;
     }
-
+    
+    public function SetUserID($id)
+    {
+        $_SESSION['userID'] = $id;
+    }
+    
     public function GetOpenID()
     {
         return isset($_SESSION['openID']) ? $_SESSION['openID'] : '';
