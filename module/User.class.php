@@ -222,11 +222,10 @@ class User extends Module
         
         // Create base user account and then associate it with
         // the OpenID
-        $user           = new \StdClass();
-        $user->login    = $friendly;
-        $user->password = '';
-        $objUser        = new UserModel($this->GetConnection());
-        $userID         = $objUser->Add($user);
+        $objUser           = new UserModel($this->GetConnection());
+        $objUser->login    = $friendly;
+        $objUser->password = '';
+        $userID            = $objUser->Add($objUser);
         
         // User created successfully
         if( $userID )
@@ -236,6 +235,8 @@ class User extends Module
                                       'friendly' => $friendly,
                                       'uri'      => $openIDURI));
             
+            // Update session with new account info            
+            $this->GetUserSession()->SetUserID($userID);
             
             header('Location: /user/account-successfully-created');
             die;

@@ -124,6 +124,7 @@ class View
 		$class         = isset($attributes['class']) ? $attributes['class'] : array();
 		$defaultText   = isset($attributes['defaultText']) ? $attributes['defaultText'] : '';
 		$title         = isset($attributes['title']) ? $attributes['title'] : '';
+		$placeholder   = isset($attributes['placeholder']) ? $attributes['placeholder'] : '';
 		
 		// Build attribute string
 		$attrString    = $this->BuildAttributeString($attributes);
@@ -157,7 +158,8 @@ class View
 								 'class', 
 								 'name', 
 								 'id',
-								 'value');
+								 'value',
+                                 'placeholder');
 			
 			foreach( $attributes as $key => $value )
 			{

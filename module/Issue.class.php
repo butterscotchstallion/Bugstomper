@@ -49,7 +49,12 @@ class Issue extends Module
         $objIssue = new IssueModel($this->GetConnection());
         $newBugID = $objIssue->Update($objNew, $objOld);
         
-        header('HTTP 1.1 202 Accepted');
+        // Error editing issue
+        if( ! $newBugID )
+        {
+            throw new \RuntimeException(sprintf('Error editing issue #%d', $objNew->id));
+        }
+        
         header(sprintf('Location: %s', $return));
         die;
     }

@@ -10,12 +10,13 @@ use application\Router                      as Router;
 use module\ErrorHandler                     as ErrorHandler;
 use application\exception\NotFoundException as NotFoundException;
 
-$objRouter      = new Router();	
-$objUserSession = new UserSession();
-$userIdentity   = $objUserSession->UserID();
-$userLogin 		= $objUserSession->UserLogin();
+$objRouter       = new Router();	
+$objUserSession  = new UserSession();
+$objHTTPResponse = new HTTPResponse();
+$userIdentity    = $objUserSession->UserID();
+$userLogin 		 = $objUserSession->UserLogin();
 
-$objView        = new View();
+$objView         = new View();
 $objView->AddCSS('globalCSS');
 $objView->AddJS('globalJS');
 
@@ -37,7 +38,7 @@ foreach( $modules as $key => $m )
     $objModule->SetView($objView);
     $objModule->SetConnection($connection);
     $objModule->SetUserSession($objUserSession);
-    $objModule->SetHTTPResponse(new HTTPResponse());
+    $objModule->SetHTTPResponse($objHTTPResponse);
     
     // Template variables available to all modules
     $objView->Add('userLogin', $userLogin);
@@ -60,7 +61,7 @@ try
     // Set up error handler
     $objHandler = new ErrorHandler();
     $objHandler->SetView($objView);
-    $objHandler->SetHTTPResponse(new HTTPResponse());
+    $objHandler->SetHTTPResponse($objHTTPResponse);
     
     // Load route
     $routeLoaded = $objRouter->Route();

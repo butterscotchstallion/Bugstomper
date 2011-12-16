@@ -1,4 +1,9 @@
 <?php
+/**
+ * Bugstomper - a rudimentary bug tracker just for fun
+ * @author PrgmrBill <bill@prgmrbill.com>
+ *
+ */
 ob_start();
 session_start();
 error_reporting(-1);

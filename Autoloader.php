@@ -3,9 +3,6 @@
  * Init and autoloading
  *
  */
-error_reporting(-1);
-ini_set('display_errors', 1);
-
 define('APP_ROOT', __DIR__);
 $paths 	   = array();
 $paths[]   = sprintf('%s/model', APP_ROOT);

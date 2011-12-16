@@ -1,7 +1,7 @@
 <?php 
 use application\View as View;
 use application\Util as Util;
-require '../view/Global/Header.template.php';
+$this->DisplayHeader();
 
 $issue    = $this->Get('issue');
 $readOnly = $this->Get('readOnly');
@@ -84,7 +84,7 @@ if( $issue ):
                                                   'valueProperty' => 'id',
                                                   'class'	=> array('issueSelect'),
                                                   'value'	   => $issue->severityName,
-                                                  'options'  => self::Get('issueSeverity')));?>
+                                                  'options'  => $this->Get('issueSeverity')));?>
 				</td>
 			</tr>
 			
@@ -92,23 +92,22 @@ if( $issue ):
 				<td class="issueInfoLbl">Status</td>
 				<td class="issueInfoValue" colspan="2">
 					<?php echo $this->Input(array('type' 	   => 'select',
-                                                 'name' => 'issue[status]',
-                                                 'id' => 'issueStatusSelect',
-                                                 'title' => 'description',
-                                                 'readOnly' => $readOnly,
-                                                 'textProperty' => 'name',
-                                                 'valueProperty' => 'id',
-                                                 'class'	=> array('issueSelect'),
-                                                 'selected' => $issue->statusID,
-                                                 'value'	   => $issue->statusName,
-                                                 'options'  => self::Get('issueStatus')));
+                                                  'name' => 'issue[status]',
+                                                  'id' => 'issueStatusSelect',
+                                                  'title' => 'description',
+                                                  'readOnly' => $readOnly,
+                                                  'textProperty' => 'name',
+                                                  'valueProperty' => 'id',
+                                                  'class'	=> array('issueSelect'),
+                                                  'selected' => $issue->statusID,
+                                                  'value'	   => $issue->statusName,
+                                                  'options'  => $this->Get('issueStatus')));
 					?>
 											
 					<span id="issueStatusDescription"><?php echo $issue->statusDescription;?></span>
 				</td>
 			</tr>
-			
-			
+						
 			<tr>
 				<td class="issueInfoLbl">Assigned User</td>
 				<td class="issueInfoValue" colspan="2">
@@ -126,16 +125,16 @@ if( $issue ):
 						endif;
 					else:
 						echo $this->Input(array('type' 	   => 'select',
-                                               'name' => 'issue[assignedTo]',
-                                               'readOnly' => $readOnly,
-                                               'defaultText' => 'Unassigned',
-                                               'textProperty' => 'login',
-                                               'valueProperty' => 'id',
-                                               'defaultText' => 'Unassigned',
-                                               'class'	=> array('issueSelect'),
-                                               'selected' => $issue->assignedToUserID,
-                                               'value'	   => $issue->assignedToUserID,
-                                               'options' => self::Get('users')));
+                                                'name' => 'issue[assignedTo]',
+                                                'readOnly' => $readOnly,
+                                                'defaultText' => 'Unassigned',
+                                                'textProperty' => 'login',
+                                                'valueProperty' => 'id',
+                                                'defaultText' => 'Unassigned',
+                                                'class'	=> array('issueSelect'),
+                                                'selected' => $issue->assignedToUserID,
+                                                'value'	   => $issue->assignedToUserID,
+                                                'options' => $this->Get('users')));
 					endif;
 					?>
 				</td>
@@ -145,10 +144,10 @@ if( $issue ):
 				<td class="issueInfoLbl">Description</td>
 				<td class="issueInfoValue" colspan="2" id="issueDetailsDescription">
 					<?php echo $this->Input(array('type' 	   => 'textarea',
-                                                 'name' => 'issue[description]',
-                                                 'readOnly' => $readOnly,
-                                                 'class'    => array('issueDescriptionArea'),
-                                                 'value'	   => Util::Esc($issue->description)));?>
+                                                  'name' => 'issue[description]',
+                                                  'readOnly' => $readOnly,
+                                                  'class'    => array('issueDescriptionArea'),
+                                                  'value'	   => Util::Esc($issue->description)));?>
 				</td>
 			</tr>
 			
@@ -170,11 +169,25 @@ if( $issue ):
 			<tr>
 				<td class="issueInfoLbl">Comments</td>
 				<td class="issueInfoValue" colspan="2">
-					<?php if( self::Get('issueComments') ):?>
+					<?php if( $this->Get('issueComments') ):?>
 						hi
 					<?php else:?>
-						No comments
+						<p style="margin: 0 0 1em 0">
+                            No comments 
+                            &mdash; 
+                            <a href="?addcomment=1" title="Add a comment">Add a comment</a>
+                        </p>
 					<?php endif;?>
+                    
+                    <?php 
+                    if(isset($_GET['addcomment'])):
+                        echo $this->Input(array('type' 	 => 'textarea',
+                                                'name'     => 'comment',
+                                                'placeholder' => 'Type something awesome here',
+                                                'readOnly' => false,
+                                                'class'    => array('issueDescriptionArea')));
+                    endif;
+                    ?>
 				</td>
 		</tbody>
 		</table>
@@ -189,4 +202,4 @@ if( $issue ):
 	<p>Sorry, but we couldn't find that issue.</p>
 <?php endif;
 
-require '../view/Global/Footer.template.php';
+$this->DisplayFooter();
