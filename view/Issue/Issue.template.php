@@ -169,9 +169,12 @@ if( $issue ):
 			<tr>
 				<td class="issueInfoLbl">Comments</td>
 				<td class="issueInfoValue" colspan="2">
-					<?php if( $this->Get('issueComments') ):?>
-						hi
-					<?php else:?>
+					<?php 
+                    $comments = $this->Get('issueComments');
+                    
+                    if( $comments ):
+                        require 'IssueComments.template.php';
+                    else:?>
 						<p style="margin: 0 0 1em 0">
                             No comments 
                             &mdash; 

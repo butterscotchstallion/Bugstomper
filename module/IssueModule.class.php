@@ -39,6 +39,11 @@ class IssueModule extends BaseModule
         $this->SetRoutes($routes);
     }
     
+    /**
+     * POST /edit
+     *
+     *
+     */
     public function EditIssue()
     {
         $objNew   = isset($_POST['issue']) ? (object) $_POST['issue'] : false;

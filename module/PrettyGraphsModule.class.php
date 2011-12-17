@@ -11,7 +11,7 @@ class PrettyGraphsModule extends BaseModule
     public function __construct()
     {
         $routes   = array();
-    
+        
         // JSON opener distribution
         $routes['OpenerDistribution'] = array('pattern'  => '#^/pretty-graphs-and-stuff/opener-distribution$#',
                                               'callback' => array($this, 'OpenerDistribution'),

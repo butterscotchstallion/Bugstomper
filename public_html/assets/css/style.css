@@ -546,6 +546,15 @@ td.issueCreatedTD {
 			vertical-align: middle;
 		}
 
+    /* issue comments */
+    .issueCommentContainer {
+     
+    }
+    
+    .issueCommentAuthorIcon {
+        
+    }
+    
 #topUserInfoArea {
 	float: right;
 	width: 40%;
