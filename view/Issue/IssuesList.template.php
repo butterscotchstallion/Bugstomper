@@ -39,7 +39,7 @@ if( $issues ):
                 
                 // Comments on this issue                
                 $comments     = $this->Get('commentCounts');
-                $commentCount = isset($comments[$b->id]) ? $comments[$b->id] : 0;
+                $commentCount = isset($comments[$b->id]) ? $comments[$b->id]->commentCount : 0;
                 
                 $id        = $b->id;
                 $slug      = $b->slug;

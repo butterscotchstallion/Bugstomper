@@ -8,6 +8,7 @@ use application\thirdparty\LightOpenID      as LightOpenID;
 use application\UserSession                 as UserSession;
 use model\User                              as UserModel;
 use model\Issue                             as IssueModel;
+use model\Comment                           as CommentModel;
 use model\OpenIDUser                        as OpenIDUserModel;
 
 class UserModule extends BaseModule
@@ -70,6 +71,11 @@ class UserModule extends BaseModule
         $this->GetView()->Display(array('tpl' => '../view/User/AccountCreatedSuccessfully.template.php'));
     }
     
+    /**
+     * Display user profile
+     *
+     *
+     */
     public function DisplayProfile()
     {
         $routes             = $this->GetRoutes();
@@ -82,21 +88,27 @@ class UserModule extends BaseModule
         $objUser = new UserModel($this->GetConnection());
         $user    = $objUser->GetUserByID($userID);
         
-        // User not found
-        if( ! $user )
+        if( $user )
         {
-            throw new NotFoundException();
+            // Get user profile information
+            $objIssue 	    = new IssueModel($this->GetConnection());
+            $openedIssues   = $objIssue->GetIssuesOpenedByUser($userID);
+            $assignedIssues = $objIssue->GetIssuesAssignedToUser($userID);
+            
+            // Get comments for this user
+            $objComment = new CommentModel($this->GetConnection());
+            $comments = $objComment->GetCommentCountByIssueID($userID);
+            
+            $this->GetView()->Display(array('tpl'     => '../view/User/UserProfile.template.php',
+                                            'tplVars' => array('openedIssues'   => $openedIssues,
+                                                               'assignedIssues' => $assignedIssues,
+                                                               'user'           => $user,
+                                                               'comments'       => $comments)));
         }
-        
-        // Get user profile information
-        $objIssue 	    = new IssueModel($this->GetConnection());
-        $openedIssues   = $objIssue->GetIssuesOpenedByUser($userID);
-        $assignedIssues = $objIssue->GetIssuesAssignedToUser($userID);
-        
-        $this->GetView()->Display(array('tpl'     => '../view/User/UserProfile.template.php',
-                                        'tplVars' => array('openedIssues'   => $openedIssues,
-                                                           'assignedIssues' => $assignedIssues,
-                                                           'user'           => $user)));
+        else
+        {
+            $this->GetView()->Display(array('tpl' => '../view/User/UserNotFound.template.php'));
+        }        
     }
     
     public function SignOut()

@@ -9,15 +9,35 @@ class Comment extends Model
     /**
      * Gets number of comments for each issue
      *
+     * @param int $author - user ID to filter on (optional) 
+     *
      */
-    public function GetCommentCountByIssueID()
+    public function GetCommentCountByIssueID($author = NULL)
 	{
-		$q = 'SELECT c.issue_id AS issueID,
-                     COUNT(*)   AS commentCount
-			  FROM  issue_comment c
-			  GROUP BY c.issue_id';
+        $authorClause = '';
+        $userJoin = '';
+        $params = array();
+        if( $author )
+        {
+            $authorClause = ' WHERE u.id = :author ';
+            $userJoin = ' INNER JOIN user u ON u.id = c.created_by ';
+            $params = array(':author' => intval($author));
+        }
+        
+		$q = sprintf('SELECT c.issue_id AS issueID,
+                             i.title AS issueTitle,
+                             i.slug AS issueSlug,
+                             COUNT(*)   AS commentCount
+                      FROM  issue_comment c
+                      INNER JOIN issue i ON i.id = c.issue_id
+                      %s
+                      %s
+                      GROUP BY c.issue_id
+                      ORDER BY c.created_at DESC',
+                      $userJoin,
+                      $authorClause);
               
-		$tmp = $this->FetchAll($q);
+		$tmp = $this->FetchAll($q, $params);
         
         if( $tmp )
         {
@@ -25,7 +45,7 @@ class Comment extends Model
             
             foreach( $tmp as $k => $c )
             {
-                $comments[$c->issueID] = $c->commentCount;
+                $comments[$c->issueID] = $c;
             }
             
             return $comments;
@@ -34,17 +54,23 @@ class Comment extends Model
         return array();
 	}
     
+    /**
+     * Gets comments on an issue
+     * @param int $issueID - the issue to get comments for
+     *
+     */
 	public function GetComments($issueID)
 	{
-		$q = 'SELECT c.text,
+		$q = 'SELECT c.comment_text AS text,
 					 c.created_at AS createdAt,
 					 c.updated_at AS updatedAt,
 					 c.created_by AS createdBy,
-					 o.friendly_name AS createdByLogin,
-                     o.user_id AS createdByUserID
+					 COALESCE(o.friendly_name, u.login) AS createdByLogin,
+                     u.id AS createdByUserID
 			  FROM  issue_comment c
 			  LEFT  JOIN openid_account o ON o.user_id = c.created_by
 			  INNER JOIN issue 			i ON i.id 	   = c.issue_id
+              INNER JOIN user           u ON u.id      = c.created_by
 			  WHERE i.id = :issueID
               ORDER BY c.created_at DESC';
 		return $this->FetchAll($q, array('issueID' => intval($issueID)));
@@ -62,7 +88,7 @@ class Comment extends Model
     public function Add($objComment)
     {
         $q = 'INSERT INTO issue_comment(issue_id,
-                                        text,
+                                        comment_text,
                                         created_at,
                                         created_by)
               VALUES(:issueID,:text,NOW(),:userID)';

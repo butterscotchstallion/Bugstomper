@@ -4,6 +4,7 @@
 	$userLogin      = htmlentities($user->login);
     $assignedIssues = $this->Get('assignedIssues');
     $openedIssues   = $this->Get('openedIssues');
+    $comments       = $this->Get('comments');
 ?>
 
 <h1>User profile for <?php echo $userLogin;?></h1>
@@ -44,7 +45,20 @@ if($openedIssues):
 </ul>
 <?php endif;?>
 
-
+<?php 
+// Comments
+if($comments):
+?>
+<h2><?php echo $userLogin;?> has commented on <?php echo count($comments);?> issues</h2>
+<ul class="userProfileList">
+	<?php foreach($comments as $issueID => $c):?>
+		<li>
+			<a href="/issues/<?php echo $c->issueID;?>/<?php echo $c->issueSlug;?>"
+			   title="View this issue"><?php echo $c->issueTitle;?></a> (<?php echo $c->commentCount;?>)
+		</li>
+	<?php endforeach?>
+</ul>
+<?php endif;?>
 
 <?php $this->DisplayFooter();?>
 	
