@@ -36,11 +36,29 @@ if( $issues ):
 									 $b->severity, 
 									 $title,
 									 $assigned);
+                
+                // Comments on this issue                
+                $comments     = $this->Get('commentCounts');
+                $commentCount = isset($comments[$b->id]) ? $comments[$b->id] : 0;
+                
+                $id        = $b->id;
+                $slug      = $b->slug;
+                $issuelink = sprintf('/issues/%d/%s', $id, $slug);
+                $editLink  = sprintf('%s/edit', $issuelink);
+                $commentLink = sprintf('%s#comments', $editLink);
 			?>
 				<tr>
 					<td class="issueTitleTD">
-						<a href="/issues/<?php echo $b->id;?>/<?php echo $b->slug;?>"
+						<a href="<?php echo $issuelink;?>"
 						   title="<?php echo $tooltip;?>"><?php echo $title;?></a>
+                           
+                        <p class="issueCommentCount">
+                            <a href="<?php echo $commentLink;?>" 
+                               title="View comments on this issue"
+                               class="commentLink">
+                                <?php echo $commentCount;?> comments
+                            </a>
+                        </p>
 					</td>
 					
 					<td class="issueStatusTD">

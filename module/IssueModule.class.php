@@ -96,6 +96,8 @@ class IssueModule extends BaseModule
 		$objComment    = new CommentModel($this->GetConnection());
 		$issueComments = $objComment->GetComments($id); 
 
+        //var_dump($issueComments);
+        
 		$tplVars = array( 'issueComments' => $issueComments
                          ,'users' 		  => $users
                          ,'issue'		  => $issue
@@ -138,6 +140,11 @@ class IssueModule extends BaseModule
                                                                   'issue'         => $issue)));
     }
     
+    /**
+     * Display list of issues
+     *
+     *
+     */
     public function DisplayIssueList()
     {
         $objIssue       = new IssueModel($this->GetConnection());
@@ -159,6 +166,12 @@ class IssueModule extends BaseModule
         $objUser        = new UserModel($this->GetConnection());
         $users		    = $objUser->GetUsers();
         
+        // Comment count for each issue
+        $objComment    = new CommentModel($this->GetConnection());
+        $commentCounts = $objComment->GetCommentCountByIssueID();
+        
+        //var_dump($commentCounts);
+        
         $this->GetView()->SetPageTitle('Issues');
         
         return $this->GetView()->Display(array('tpl'     => '../view/Issue/IssuesList.template.php',
@@ -168,6 +181,7 @@ class IssueModule extends BaseModule
                                                                   'statusFilters'  => $statusFilters,
                                                                   'statusList'     => $statusList,
                                                                   'assignedFilter' => $assignedFilter,
-                                                                  'query'          => $query)));
+                                                                  'query'          => $query,
+                                                                  'commentCounts'  => $commentCounts)));
     }
 }

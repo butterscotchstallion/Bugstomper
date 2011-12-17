@@ -28,7 +28,7 @@ if( $issue ):
 		<input type="hidden" name="old[issueID]" value="<?php echo $issue->id;?>">
 		<input type="hidden" name="old[updatedByUserID]" value="1">
 		
-		<input id="editBugSaveButton" type="submit" value="Save">
+		<input class="editBugSaveButton" type="submit" value="Save">
 	<?php endif;
 	
 	if( $readOnly ):
@@ -166,9 +166,13 @@ if( $issue ):
 			</tr>
 			<?php endif;?>
 
-			<tr>
+			<tr id="comments">
 				<td class="issueInfoLbl">Comments</td>
 				<td class="issueInfoValue" colspan="2">
+                    <a href="<?php echo $editLink;?>#issueComment" 
+                       title="Add a comment"
+                       id="addIssueCommentLink">Add a comment</a>
+                    
 					<?php 
                     $comments = $this->Get('issueComments');
                     
@@ -191,6 +195,14 @@ if( $issue ):
                                                 'placeholder' => 'Type something awesome here',
                                                 'readOnly' => false,
                                                 'class'    => array('issueDescriptionArea')));
+                                                
+                        ?>
+                        <input class="editBugSaveButton" 
+                               style="clear: both;margin-top:1em"
+                               type="submit" 
+                               value="Save">
+                        
+                        <?php
                     endif;
                     ?>
 				</td>

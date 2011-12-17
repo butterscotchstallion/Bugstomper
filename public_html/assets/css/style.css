@@ -464,7 +464,7 @@ td.issueCreatedTD {
 	border: 1px solid #222;
 }
 
-#editBugSaveButton {
+.editBugSaveButton {
 	display: block;
 	float: right;
 	padding: .25em;
@@ -533,6 +533,11 @@ td.issueCreatedTD {
 		margin: 0 0 0 .5em;
 	}
 
+    .issueCommentCount {
+        font-size: 60%;
+        padding-left: 1em;
+    }
+    
 	#issueListingStatusList {
 		list-style: none;
 		display: inline;
@@ -546,14 +551,64 @@ td.issueCreatedTD {
 			vertical-align: middle;
 		}
 
+        #issues tbody tr td a.commentLink {
+            background: transparent url(/images/comment.png) no-repeat 0 5px;
+            padding: 0 0 0 1.5em;
+            display: block;
+        }
+            #issues tbody tr td a.commentLink:hover {
+                color: #000;
+            }
+        
     /* issue comments */
     .issueCommentContainer {
-     
+        overflow: hidden;
+        clear: both;
+        background-color: #CFC9B5;
+        padding: 1em;
+        color: #222;
+        margin: 0 0 1em 0;
+        border: 1px solid #222;
     }
-    
-    .issueCommentAuthorIcon {
+        .commentDetails {
+            float: left;
+            width: 75%;
+            padding: 0 0 0 2%;
+            margin: 0 0 2% 0;
+        }
+            .commentDetails a, 
+            .commentDetails a:visited,
+            .commentDetails a:active {
+                color: #666;
+            }
+            
+            .commentDetails p {
+                clear: both;
+                padding: 0 0 5% 0;
+                margin: 0;
+            }
+            
+            #addIssueCommentLink {
+                display: block;
+                margin: 0 0 1em 0;
+                text-align: center;
+                background-color: #CFC9B5;
+                color: #222;
+                border: 3px solid #000;
+            }
+            
+            .issueCommentTimestamp {
+            
+            }
         
-    }
+        .issueCommentAuthorIcon {
+            width: 10%;
+            background-color: #000;
+            float: left;
+            display: block;
+            height: 100px;
+            border: 2px solid #000;
+        }
     
 #topUserInfoArea {
 	float: right;

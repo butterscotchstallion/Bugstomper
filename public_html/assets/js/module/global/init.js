@@ -15,10 +15,12 @@ $(document).ready(function() {
 		});
 		
 		// Info value TD hover
-		$('.issueInfoValue').hover(function() {
+		/*
+        $('.issueInfoValue').hover(function() {
 			$(this).find('span,a').css('color', '#fff');
 		},
 		function() {
 			$(this).find('span,a').css('color', '#000');
 		});
+        */
 });
