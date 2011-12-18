@@ -187,6 +187,7 @@ class Issue extends Model
 								sv.name AS severity,
 						 		b.created_at AS createdAt,
 						 		u.login AS openedByUserLogin,
+                                b.status AS statusID,
 						 		bs.name AS statusName,
 						 		bs.style_name AS statusStyleName,
 								COALESCE(ua.login, 'Unassigned') AS assignedToUserLogin,

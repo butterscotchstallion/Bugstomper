@@ -53,6 +53,7 @@ class View
 	public function Display($settings = array())
 	{
 		$tpl 	 	    = isset($settings['tpl']) ? $settings['tpl'] : false;
+        
         // Used += here because we don't want to overwrite any variables
         // set before this method is called (such as user login!)
 		$this->tplVars += isset($settings['tplVars']) ? $settings['tplVars'] : array();
@@ -125,6 +126,7 @@ class View
 		$defaultText   = isset($attributes['defaultText']) ? $attributes['defaultText'] : '';
 		$title         = isset($attributes['title']) ? $attributes['title'] : '';
 		$placeholder   = isset($attributes['placeholder']) ? $attributes['placeholder'] : '';
+		$maxlength     = isset($attributes['maxlength']) ? $attributes['maxlength'] : '';
 		
 		// Build attribute string
 		$attrString    = $this->BuildAttributeString($attributes);
@@ -159,7 +161,8 @@ class View
 								 'name', 
 								 'id',
 								 'value',
-                                 'placeholder');
+                                 'placeholder',
+                                 'maxlength');
 			
 			foreach( $attributes as $key => $value )
 			{

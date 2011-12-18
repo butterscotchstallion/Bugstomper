@@ -8,7 +8,7 @@ use application\HTTPResponse                as HTTPResponse;
 use application\UserSession                 as UserSession;
 use application\Router                      as Router;
 use module\ErrorHandler                     as ErrorHandler;
-use application\exception\NotFoundException as NotFoundException;
+//use module\Settings                         as Settings;
 
 $objRouter       = new Router();	
 $objUserSession  = new UserSession();
@@ -23,7 +23,8 @@ $objView->AddJS('globalJS');
 // Enabled Modules
 $modules = array('UserModule', 
                  'IssueModule',
-                 'PrettyGraphsModule');
+                 'PrettyGraphsModule',
+                 'SettingsModule');
                  
 /*
  * Each module returns a callback

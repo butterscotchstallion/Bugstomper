@@ -45,20 +45,25 @@ if( $issues ):
                 $slug      = $b->slug;
                 $issuelink = sprintf('/issues/%d/%s', $id, $slug);
                 $editLink  = sprintf('%s/edit', $issuelink);
-                $commentLink = sprintf('%s#comments', $editLink);
+                $commentLink = sprintf('%s#comments', $issuelink);
 			?>
 				<tr>
 					<td class="issueTitleTD">
 						<a href="<?php echo $issuelink;?>"
-						   title="<?php echo $tooltip;?>"><?php echo $title;?></a>
-                           
-                        <p class="issueCommentCount">
-                            <a href="<?php echo $commentLink;?>" 
-                               title="View comments on this issue"
-                               class="commentLink">
-                                <?php echo $commentCount;?> comments
-                            </a>
-                        </p>
+						   title="<?php echo $tooltip;?>"
+                           class="issueListingLinks"><?php echo $title;?></a>
+                                                
+                        <footer class="issueDetails">
+                            <ul>
+                                <li>
+                                    <a href="<?php echo $commentLink;?>" 
+                                       title="View comments on this issue"
+                                       class="commentLink">
+                                        <?php echo $commentCount;?> comments
+                                    </a>
+                                </li>
+                            </ul>
+                        </footer>
 					</td>
 					
 					<td class="issueStatusTD">

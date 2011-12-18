@@ -29,5 +29,9 @@ return array(
 		'//assets/js/flot/jquery.flot.js',
 		'//assets/js/flot/jquery.flot.pie.js',
 		'//assets/js/module/report/report.js'
-	)
+	),
+    
+    'SettingsModuleCSS' => array(
+        '//assets/css/module/Settings/Settings.css'
+    )
 );

@@ -26,8 +26,10 @@ class User extends Model
 	public function GetUserByID($userID)
 	{
 		$q    = 'SELECT u.login,
-						u.created_at AS createdAt
+						u.created_at AS createdAt,
+                        COALESCE(u.display_name, o.friendly_name) AS displayName
 				 FROM user u
+                 LEFT JOIN openid_account o ON o.user_id = u.id
 				 WHERE u.id = :userID';
 		return $this->Fetch($q, array(':userID' => $userID));
 	}

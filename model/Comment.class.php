@@ -14,14 +14,17 @@ class Comment extends Model
      */
     public function GetCommentCountByIssueID($author = NULL)
 	{
+        // If an author is specified, then filter the comments
+        // using that author
         $authorClause = '';
-        $userJoin = '';
-        $params = array();
+        $userJoin     = '';
+        $params       = array();
+        
         if( $author )
         {
             $authorClause = ' WHERE u.id = :author ';
-            $userJoin = ' INNER JOIN user u ON u.id = c.created_by ';
-            $params = array(':author' => intval($author));
+            $userJoin     = ' INNER JOIN user u ON u.id = c.created_by ';
+            $params       = array(':author' => intval($author));
         }
         
 		$q = sprintf('SELECT c.issue_id AS issueID,
@@ -39,6 +42,7 @@ class Comment extends Model
               
 		$tmp = $this->FetchAll($q, $params);
         
+        // Organize comments by issue ID
         if( $tmp )
         {
             $comments = array();
