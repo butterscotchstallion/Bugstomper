@@ -46,51 +46,70 @@ abstract class Model
 		return $objChange;
 	}
 	
-	protected function Object2ParamArray($obj)
+    /**
+     * BuildUpdateQuery - Generate assignment 
+     * statement and token based on the property 
+     * names of the object supplied
+     *
+     * @param array $props - properties to update
+     *
+     */
+    protected function BuildUpdateQuery($properties)
+    {
+        $query = '';
+        
+        if( $properties )
+        {
+            foreach( $properties as $prop => $val )
+            {
+                $query .= sprintf(' %s = :%prop, ');
+            }
+            
+            $query = rtrim($query,',');
+        }
+        
+        return $query;
+    }
+    
+    /*
+     * Builds a parameter array based on input
+     * @param array $properties - key/value pairs 
+     * @return array - parameters
+     *
+     */
+	protected function Object2ParamArray($properties)
 	{
-		$tmp = get_object_vars($obj);
-		
-		if( $tmp )
+        $params = array();
+        
+		if( $properties )
 		{
-			$params = array();
 			foreach( $tmp as $k => $o )
 			{
 				$key 		  = sprintf(':%s', $k);
 				$params[$key] = $o;
 			}
-			
-			return $params;
 		}
 		
-		return false;
+		return $params;
 	}
 	
 	protected function FetchAll($query, $params = array())
 	{
-		try
-		{
-			$stmt = $this->Execute($query, $params);
-			return $stmt->FetchAll();
-		}
-		catch(PDOException $e)
-		{
-			$this->HandleException($e);
-		}
+        $stmt = $this->Execute($query, $params);
+        return $stmt->FetchAll();
 	}
 	
 	protected function Fetch($query, $params = array())
 	{
-		try
-		{
-			$stmt = $this->Execute($query, $params);
-			return $stmt->Fetch();
-		}
-		catch(PDOException $e)
-		{
-			$this->HandleException($e);
-		}
+        $stmt = $this->Execute($query, $params);
+        return $stmt->Fetch();
 	}
 	
+    /**
+     * Executes a SQL query with optional bound parameters
+     * @param array $params - key/value pairs to bind as parameters
+     *
+     */
 	protected function Execute($query, $params = array())
 	{
 		try
