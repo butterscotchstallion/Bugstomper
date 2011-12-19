@@ -149,7 +149,8 @@ class UserModule extends BaseModule
             if( $user )
             {
                 $this->GetUserSession()->SignIn(array('userID'    => $user->id,
-                                                      'userLogin' => $userLogin));
+                                                      'userLogin' => $userLogin,
+                                                      'displayName' => $user->displayName));
                 
                 header('Location: /issues');
                 die;

@@ -62,12 +62,24 @@ class User extends Model
 		return $this->FetchAll($q);
 	}
 	
+    /**
+     * Gets user information based on the provided
+     * openID identity
+     * @param string $identity - openID identity string
+     * @return object | false
+     *  
+     */
 	public function GetUserByOpenID($identity)
 	{
 		$q    = 'SELECT u.id,
                         u.login,
 						u.created_at AS createdAt,
-						o.friendly_name AS friendlyName
+						o.friendly_name AS friendlyName,
+                        CASE WHEN LENGTH(u.display_name) > 0
+                        THEN u.display_name
+                        WHEN LENGTH(u.login) > 0
+                        THEN u.login
+                        END AS displayName
 				 FROM user u
 				 INNER JOIN openid_account o ON o.user_id = u.id
 				 WHERE o.uri = :identity';

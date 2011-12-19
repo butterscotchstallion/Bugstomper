@@ -31,8 +31,8 @@
 		<a href="/pretty-graphs-and-stuff">Pretty graphs and stuff</a>
 		
 		<div id="topUserInfoArea">
-		<?php if( $this->Get('userLogin') ):?>
-			Signed in as <strong><?php echo $this->Get('userLogin');?></strong>
+		<?php if( $this->Get('displayName') ):?>
+			Signed in as <strong><a href="/settings" title="Settings"><?php echo $this->Get('displayName');?></a></strong>
 			[<a href="/user/sign-out" title="Sign Out">Sign Out</a>]
 		<?php else:?>
 			<a href="/user/sign-in" title="Sign in">Sign In</a>

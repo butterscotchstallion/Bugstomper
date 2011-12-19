@@ -14,7 +14,7 @@ $objRouter       = new Router();
 $objUserSession  = new UserSession();
 $objHTTPResponse = new HTTPResponse();
 $userIdentity    = $objUserSession->UserID();
-$userLogin 		 = $objUserSession->UserLogin();
+$userLogin 		 = $objUserSession->DisplayName();
 
 $objView         = new View();
 $objView->AddCSS('globalCSS');
@@ -42,7 +42,7 @@ foreach( $modules as $key => $m )
     $objModule->SetHTTPResponse($objHTTPResponse);
     
     // Template variables available to all modules
-    $objView->Add('userLogin', $userLogin);
+    $objView->Add('displayName', $userLogin);
     $objView->Add('userIdentity', $userIdentity);
     
     // Get routes from each module

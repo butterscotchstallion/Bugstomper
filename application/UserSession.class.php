@@ -45,6 +45,11 @@ class UserSession
 		return isset($_SESSION['userLogin']) ? $_SESSION['userLogin'] : '';
 	}
 	
+    public function DisplayName()
+	{
+		return isset($_SESSION['displayName']) ? $_SESSION['displayName'] : '';
+	}
+    
 	public function SignOut()
 	{
 		session_destroy();
