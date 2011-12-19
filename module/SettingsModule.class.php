@@ -18,8 +18,40 @@ class SettingsModule extends BaseModule
         $routes['DisplaySettings'] = array('pattern'  => '#^/settings$#',
                                            'before'   => $checkSignInCallback,
                                            'callback' => array($this, 'DisplaySettings'));
+                                           
+        // Save settings
+        $routes['SaveSettings'] = array('pattern'  => '#^/settings$#',
+                                        'before'   => $checkSignInCallback,
+                                        'method'   => 'POST',
+                                        'callback' => array($this, 'SaveSettings'));
         
         $this->SetRoutes($routes);
+    }
+    
+    /**
+     * Save settings (POST)
+     *
+     */
+    public function SaveSettings()
+    {
+        $settings    = isset($_POST['settings']) ? $_POST['settings'] : array();
+        $displayName = isset($settings['displayName']) ? $settings['displayName'] : '';
+        
+        // Update
+        $objUser     = new UserModel($this->GetConnection());
+        $userID      = $this->GetUserSession()->UserID();
+        $update      = $objUser->Update(array('display_name' => $displayName,
+                                              'id'           => $userID));
+                                              
+        if( $update )
+        {
+            header('Location: /settings');
+            die;
+        }                      
+        else
+        {
+            throw new \RuntimeException('Error updating settings!');
+        }         
     }
     
     /**

@@ -64,9 +64,14 @@ class Issue extends Model
 						s.id AS statusID,
 						s.name AS statusName,
 						s.description AS statusDescription,
-						u.login AS openedByUserLogin,
+						COALESCE(u.display_name, u.login) AS openedByUserLogin,
 						b.opened_by AS openedByUserID,
-						COALESCE(ua.login, 'Unassigned') AS assignedToUserLogin,
+						CASE WHEN LENGTH(u.display_name) > 0
+                        THEN u.display_name
+                        WHEN LENGTH(ua.login) > 0
+                        THEN ua.login
+                        ELSE 'Unassigned'
+                        END AS assignedToUserLogin,
 						b.assigned_to AS assignedToUserID
 				 FROM issue b
 				 INNER JOIN issue_severity bs ON bs.id = b.severity

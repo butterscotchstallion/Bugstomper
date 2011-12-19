@@ -1,7 +1,7 @@
 <?php 
 	$this->DisplayHeader();
     $user           = $this->Get('user');
-	$userLogin      = htmlentities($user->login);
+	$userLogin      = htmlentities($user->displayName);
     $assignedIssues = $this->Get('assignedIssues');
     $openedIssues   = $this->Get('openedIssues');
     $comments       = $this->Get('comments');

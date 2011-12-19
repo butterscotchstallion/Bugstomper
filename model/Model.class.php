@@ -8,12 +8,12 @@ abstract class Model
 {
 	protected $connection;
 	protected $oldObject;
-	
+    
 	public function __construct($connection)
 	{
 		$this->connection = $connection;
 	}
-	
+
 	// Used to compare against new object and generate
 	// a change log
 	public function SetOldObject($objOld)
@@ -62,10 +62,10 @@ abstract class Model
         {
             foreach( $properties as $prop => $val )
             {
-                $query .= sprintf(' %s = :%prop, ');
+                $query .= sprintf(' %s = :%s, ', $prop, $prop);
             }
             
-            $query = rtrim($query,',');
+            $query = rtrim($query,', ');
         }
         
         return $query;
@@ -77,13 +77,13 @@ abstract class Model
      * @return array - parameters
      *
      */
-	protected function Object2ParamArray($properties)
+	protected function BuildParams($properties)
 	{
         $params = array();
         
 		if( $properties )
 		{
-			foreach( $tmp as $k => $o )
+			foreach( $properties as $k => $o )
 			{
 				$key 		  = sprintf(':%s', $k);
 				$params[$key] = $o;
@@ -120,6 +120,7 @@ abstract class Model
 		}
 		catch(PDOException $e)
 		{
+            var_dump($e);
 			$this->HandleException($e);
 		}
 	}

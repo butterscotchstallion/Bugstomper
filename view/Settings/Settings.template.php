@@ -9,7 +9,7 @@
     <label>
         Display Name (max 50 characters)        
         <?php echo $this->Input(array('type'  => 'text',
-                                      'name'  => 'settings[userDisplayName]',
+                                      'name'  => 'settings[displayName]',
                                       'id'    => 'settingsDisplayNameBox',
                                       'maxlength' => 50,
                                       'placeholder' => 'How your name is displayed to others',

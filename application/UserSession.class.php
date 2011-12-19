@@ -37,7 +37,7 @@ class UserSession
     
 	public function UserID()
 	{
-		return isset($_SESSION['userID']) ? $_SESSION['userID'] : '';
+		return isset($_SESSION['userID']) ? intval($_SESSION['userID']) : '';
 	}
 	
 	public function UserLogin()

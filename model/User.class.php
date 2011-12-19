@@ -6,13 +6,27 @@
 namespace model;
 class User extends Model
 {
-	public function Update($objUser)
+    /**
+     * Updates user model based on properties
+     * specified 
+     *
+     * @param array $properties - these columns will be 
+     * updated
+     *
+     * required properties: id
+     *
+     */
+	public function Update($properties)
 	{
-		$q    = 'UPDATE user
-				 SET 	password 	 = :password
-			     WHERE id 		 = :id';
-		return $this->Save($q, array(':title' => $objUser->password,
-									 ':id'	   => $objUser->id));
+        $query  = 'UPDATE user SET ';
+        $query .= $this->BuildUpdateQuery($properties);
+        $query .= ' WHERE id = :userID ';
+        
+        $params      = array(':userID' => intval($properties['id']));
+        $moreParams  = $this->BuildParams($properties);
+        $params     += $moreParams;
+
+		return $this->Save($query, $params);
 	}
 	
 	public function Add($objUser)
@@ -25,12 +39,16 @@ class User extends Model
 	
 	public function GetUserByID($userID)
 	{
-		$q    = 'SELECT u.login,
+		$q    = "SELECT u.login,
 						u.created_at AS createdAt,
-                        COALESCE(u.display_name, o.friendly_name) AS displayName
+                        CASE WHEN LENGTH(u.display_name) > 0
+                        THEN u.display_name
+                        WHEN LENGTH(u.login) > 0
+                        THEN u.login
+                        END AS displayName
 				 FROM user u
                  LEFT JOIN openid_account o ON o.user_id = u.id
-				 WHERE u.id = :userID';
+				 WHERE u.id = :userID";
 		return $this->Fetch($q, array(':userID' => $userID));
 	}
 	

@@ -65,18 +65,22 @@ class Comment extends Model
      */
 	public function GetComments($issueID)
 	{
-		$q = 'SELECT c.comment_text AS text,
+		$q = "SELECT c.comment_text AS text,
 					 c.created_at AS createdAt,
 					 c.updated_at AS updatedAt,
 					 c.created_by AS createdBy,
-					 COALESCE(o.friendly_name, u.login) AS createdByLogin,
+					 CASE WHEN LENGTH(u.display_name) > 0
+                     THEN u.display_name
+                     WHEN LENGTH(u.login) > 0
+                     THEN u.login
+                     ELSE 'Unassigned'
+                     END AS createdByLogin,
                      u.id AS createdByUserID
 			  FROM  issue_comment c
-			  LEFT  JOIN openid_account o ON o.user_id = c.created_by
-			  INNER JOIN issue 			i ON i.id 	   = c.issue_id
-              INNER JOIN user           u ON u.id      = c.created_by
+			  INNER JOIN issue 	  i ON i.id = c.issue_id
+              INNER JOIN user     u ON u.id = c.created_by
 			  WHERE i.id = :issueID
-              ORDER BY c.created_at DESC';
+              ORDER BY c.created_at DESC";
 		return $this->FetchAll($q, array('issueID' => intval($issueID)));
 	}
     
