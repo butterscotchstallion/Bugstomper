@@ -13,8 +13,10 @@ use model\OpenIDUser                               as OpenIDUserModel;
 
 class UserModule extends BaseModule
 {
-    public function __construct()
+    public function __construct($dependencies)
     {
+        parent::__construct($dependencies);
+        
         $routes   = array();
         
         // Used to limit access to areas that require signed

@@ -9,6 +9,11 @@ abstract class BaseModule
     private $routes = array();
     private $dependencies = array();
     
+    public function __construct($dependencies)
+    {
+        $this->dependencies = $dependencies;
+    }
+    
     /*
      * Used as a before filter to limit access
      * to certain routes
@@ -38,6 +43,8 @@ abstract class BaseModule
         $getOrSet = strtolower(substr($name, 0, 3));
         $property = substr($name, 3);
         $propVal  = isset($value[0]) ? $value[0] : ''; 
+       
+        //print_r($this->dependencies);
         
         /*
          * GET

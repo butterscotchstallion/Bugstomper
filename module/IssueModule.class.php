@@ -11,8 +11,10 @@ use model\Comment        as CommentModel;
 
 class IssueModule extends BaseModule
 {
-    public function __construct()
+    public function __construct($dependencies)
     {
+        parent::__construct($dependencies);
+        
         $routes = array();
         
         $checkSignInCallback = array($this, 'CheckSignIn');

@@ -8,7 +8,6 @@ use application\HTTPResponse                as HTTPResponse;
 use application\UserSession                 as UserSession;
 use application\Router                      as Router;
 use module\ErrorHandler                     as ErrorHandler;
-//use module\Settings                         as Settings;
 
 $objRouter       = new Router();	
 $objUserSession  = new UserSession();
@@ -35,11 +34,11 @@ foreach( $modules as $key => $m )
 {
     // Supply dependencies to module
     $moduleName = sprintf("module\\%s", $m);
-    $objModule  = new $moduleName();
-    $objModule->SetView($objView);
-    $objModule->SetConnection($connection);
-    $objModule->SetUserSession($objUserSession);
-    $objModule->SetHTTPResponse($objHTTPResponse);
+    $objModule  = new $moduleName(array('Connection'   => $connection,
+                                        'View'         => $objView,
+                                        'HTTPResponse' => $objHTTPResponse,
+                                        'Router'       => $objRouter,
+                                        'UserSession'  => $objUserSession));
     
     // Template variables available to all modules
     $objView->Add('displayName', $userLogin);
@@ -60,9 +59,8 @@ foreach( $modules as $key => $m )
 try
 {
     // Set up error handler
-    $objHandler = new ErrorHandler();
-    $objHandler->SetView($objView);
-    $objHandler->SetHTTPResponse($objHTTPResponse);
+    $objHandler = new ErrorHandler(array('View'         => $objView,
+                                         'HTTPResponse' => $objHTTPResponse));
     
     // Load route
     $routeLoaded = $objRouter->Route();
