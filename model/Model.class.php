@@ -7,45 +7,12 @@ namespace model;
 abstract class Model
 {
 	protected $connection;
-	protected $oldObject;
-    
+
 	public function __construct($connection)
 	{
 		$this->connection = $connection;
 	}
-
-	// Used to compare against new object and generate
-	// a change log
-	public function SetOldObject($objOld)
-	{	
-		//echo sprintf('setting old object to: %s', var_export($objOld, true));
-		$this->oldObject = $objOld;
-	}
-	
-	/*
-	 * @desc Creates an object with the changes to this object.
-	 * Anything not changed will not be set
-	 *
-	 * @param  object $objOld    - old object
-	 * @param  object $objNew    - new object
-	 * @return object $objChange - object with changes
-	 *
-	 */
-	protected function GenerateChangeLog($objOld, $objNew)
-	{
-		$objChange = new \StdClass();
-		
-		foreach( $objOld as $k => $o )
-		{
-			if( isset($objNew->{$k}) && $objNew->{$k} != $o )
-			{
-				$objChange->{$k} = $o;
-			}
-		}
-		
-		return $objChange;
-	}
-	
+    
     /**
      * BuildUpdateQuery - Generate assignment 
      * statement and token based on the property 

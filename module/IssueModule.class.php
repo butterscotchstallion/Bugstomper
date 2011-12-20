@@ -46,26 +46,30 @@ class IssueModule extends BaseModule
      */
     public function EditIssue()
     {
-        $objNew   = isset($_POST['issue']) ? (object) $_POST['issue'] : false;
-        $objOld   = isset($_POST['old']) ? (object) $_POST['old'] : false;
+        $issue    = isset($_POST['issue']) ? $_POST['issue'] : false;
         $return   = isset($_POST['returnTo']) ? $_POST['returnTo'] : '';
         
         // Update issue
         $objIssue = new IssueModel($this->GetConnection());
-        $newBugID = $objIssue->Update($objNew, $objOld);
+        $newBugID = $objIssue->Update($issue);
         
         // Update comment
-        $objComment          = new CommentModel($this->GetConnection());
-        $text                = isset($_POST['issueComment']) ? $_POST['issueComment'] : '';
-        $objComment->text    = $text;
-        $objComment->userID  = $this->GetUserSession()->UserID();
-        $objComment->issueID = $objNew->id;
-        $commentID           = $objComment->Add($objComment);
+        $objComment = new CommentModel($this->GetConnection());
+        $text       = isset($_POST['issueComment']) ? trim($_POST['issueComment']) : '';
+        $commentID  = null;
+        
+        if( $text )
+        {
+            $objComment->text    = $text;
+            $objComment->userID  = $this->GetUserSession()->UserID();
+            $objComment->issueID = $issue['id'];
+            $commentID           = $objComment->Add($objComment);
+        }
         
         // Error editing issue
         if( ! $newBugID || ! $commentID )
         {
-            throw new \RuntimeException(sprintf('Error editing issue #%d', $objNew->id));
+            throw new \RuntimeException(sprintf('Error editing issue #%d', $issue['id']));
         }
         
         header(sprintf('Location: %s', $return));

@@ -4,12 +4,12 @@
  *
  */
 namespace module;
-use application\thirdparty\LightOpenID      as LightOpenID;
-use application\UserSession                 as UserSession;
-use model\User                              as UserModel;
-use model\Issue                             as IssueModel;
-use model\Comment                           as CommentModel;
-use model\OpenIDUser                        as OpenIDUserModel;
+use application\thirdparty\LightOpenID\LightOpenID as LightOpenID;
+use application\UserSession                        as UserSession;
+use model\User                                     as UserModel;
+use model\Issue                                    as IssueModel;
+use model\Comment                                  as CommentModel;
+use model\OpenIDUser                               as OpenIDUserModel;
 
 class UserModule extends BaseModule
 {

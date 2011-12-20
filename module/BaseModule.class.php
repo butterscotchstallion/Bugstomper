@@ -7,10 +7,7 @@ namespace module;
 abstract class BaseModule 
 {
     private $routes = array();
-    private $view;
-    private $connection;
-    private $UserSession;
-    private $httpResponse;
+    private $dependencies = array();
     
     /*
      * Used as a before filter to limit access
@@ -48,28 +45,7 @@ abstract class BaseModule
          */
         if( $getOrSet == 'get' )
         {
-            switch($property)
-            {
-                case 'Connection':
-                    return $this->connection;
-                
-                case 'View':
-                    return $this->view;
-                
-                case 'UserSession':
-                    return $this->UserSession;
-                    
-                case 'Routes':
-                    return $this->routes;
-                
-                case 'HTTPResponse':
-                    return $this->httpResponse;
-                    
-                // Returns current user identity
-                case 'UserID':
-                    return $this->GetUserSession()->UserID();
-                
-            }
+            return isset($this->dependencies[$property]) ? $this->dependencies[$property] : false;
         }
         /*
          * SET
@@ -77,32 +53,8 @@ abstract class BaseModule
          */
         elseif( $getOrSet == 'set' )
         {
-            switch($property)
-            {
-                case 'Connection':
-                    $this->connection  = $propVal;
-                    return true;
-                
-                case 'View':
-                    $this->view        = $propVal;
-                    return true;
-                
-                case 'UserSession':
-                    $this->UserSession = $propVal;
-                    return true;
-                
-                case 'Routes':
-                    $this->routes      = $propVal;
-                    return true;
-                    
-                case 'HTTPResponse':
-                    $this->httpResponse = $propVal;
-                    return true;
-            }
+            $this->dependencies[$property] = $propVal;
+            return true;
         }
-        
-        throw new \BadMethodCallException(sprintf('Method %s not implemented on %s',
-                                                   $name,
-                                                   __CLASS__));
     }
 }

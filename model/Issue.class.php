@@ -6,11 +6,9 @@
 namespace model;
 class Issue extends Model
 {
-	protected $objOld;
-
-	public function Update($objIssue, $objOld)
+	public function Update($issue)
 	{
-		$assignedTo = isset($objIssue->assignedTo) ? $objIssue->assignedTo : null;
+		$assignedTo = isset($issue['assignedTo']) ? intval($issue['assignedTo']) : null;
 		
 		$q    = 'UPDATE issue
 				 SET title 		 = :title,
@@ -21,11 +19,8 @@ class Issue extends Model
 					 assigned_to = :assignedTo
 			     WHERE 1=1
 				 AND id 		 = :id';
-		
-		// Log changes
-		$this->AddStatusChange($objOld);
-		
-		$params = $this->Object2ParamArray($objIssue);
+        
+		$params = $this->BuildParams($issue);
 		
 		return $this->Save($q, $params);
 	}
@@ -280,7 +275,7 @@ class Issue extends Model
 					 CURDATE(),
 					 :updatedByUserID)';
 					 
-		$params = $this->Object2ParamArray($objOld);
+		$params = $this->BuildParams($objOld);
 
 		return $this->Save($q, $params);
 	}
