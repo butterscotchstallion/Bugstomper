@@ -19,7 +19,15 @@ spl_autoload_register('autoload');
 function autoload($className)
 {
     $cn = str_replace("\\", DIRECTORY_SEPARATOR, $className);
-
+    
+    // I don't want to try and cram namespaces into a third party
+    // package so this is my solution
+    if( $cn == 'Logger' )
+    {
+        require sprintf('%s/application/thirdparty/log4php/Logger.php', APP_ROOT);
+        return true;
+    }
+    
     $path = sprintf('%s/%s.class.php', APP_ROOT, $cn);
 
     if( is_readable($path) )
