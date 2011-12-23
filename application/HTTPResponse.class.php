@@ -9,7 +9,7 @@ class HTTPResponse
     private $statusCodes = array(
         100 => 'Continue',
 		101 => 'Switching Protocols',
-	
+            
 		200 => 'OK',
 		201 => 'Created',
 		202 => 'Accepted',
@@ -67,5 +67,25 @@ class HTTPResponse
         {
             echo $msg;
         }
+    }
+    
+    /**
+     * Performs a HTTP redirect
+     * @param string $uri - destination URI
+     * @return void | false
+     *
+     */
+    public function Redirect($uri)
+    {
+        $parts = parse_url($_SERVER['REQUEST_URI']);
+        $path  = isset($parts['path']) ? $parts['path'] : '';
+            
+        if( $path != $uri )
+        {
+            header(sprintf('Location: %s', $uri), true, 302);
+            die;
+        }
+        
+        return false;
     }
 }

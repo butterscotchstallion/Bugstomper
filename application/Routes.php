@@ -19,45 +19,45 @@ $objView         = new View();
 $objView->AddCSS('globalCSS');
 $objView->AddJS('globalJS');
 
-// Enabled Modules
-$modules = array('UserModule', 
-                 'IssueModule',
-                 'PrettyGraphsModule',
-                 'SettingsModule');
-                 
-/*
- * Each module returns a callback
- * and a corresponding route 
- *
- */
-foreach( $modules as $key => $m )
-{
-    // Supply dependencies to module
-    $moduleName = sprintf("module\\%s", $m);
-    $objModule  = new $moduleName(array('Connection'   => $connection,
-                                        'View'         => $objView,
-                                        'HTTPResponse' => $objHTTPResponse,
-                                        'Router'       => $objRouter,
-                                        'UserSession'  => $objUserSession));
-    
-    // Template variables available to all modules
-    $objView->Add('displayName', $userLogin);
-    $objView->Add('userIdentity', $userIdentity);
-    
-    // Get routes from each module
-    $routes     = $objModule->GetRoutes();
-    foreach( $routes as $k => $route )
-    {
-        $objRouter->AddRoute($route);
-    }
-}
-
 /*
  * Dispatch routes
  *
  */
 try
 {
+    // Enabled Modules
+    $modules = array('UserModule', 
+                     'IssueModule',
+                     'PrettyGraphsModule',
+                     'SettingsModule');
+                     
+    /*
+     * Each module returns a callback
+     * and a corresponding route 
+     *
+     */
+    foreach( $modules as $key => $m )
+    {
+        // Supply dependencies to module
+        $moduleName = sprintf("module\\%s", $m);
+        $objModule  = new $moduleName(array('Connection'   => $connection,
+                                            'View'         => $objView,
+                                            'HTTPResponse' => $objHTTPResponse,
+                                            'Router'       => $objRouter,
+                                            'UserSession'  => $objUserSession));
+        
+        // Template variables available to all modules
+        $objView->Add('displayName', $userLogin);
+        $objView->Add('userIdentity', $userIdentity);
+        
+        // Get routes from each module
+        $routes     = $objModule->GetRoutes();
+        foreach( $routes as $k => $route )
+        {
+            $objRouter->AddRoute($route);
+        }
+    }
+    
     // Set up error handler
     $objHandler = new ErrorHandler(array('View'         => $objView,
                                          'HTTPResponse' => $objHTTPResponse));

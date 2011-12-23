@@ -1,19 +1,21 @@
 <?php
 /*
- * ErrorHandler - handles errors such as 404
+ * ErrorHandler - handles errors
  *
  */
 namespace module;
 
 class ErrorHandler extends BaseModule
 {
-    public function __construct()
+    public function __construct($dependencies)
     {
+        parent::__construct($dependencies);
+        
         $routes   = array();
         
-        // Sign in
-        $routes[] = array('pattern'  => '#^/error/404$#',
-                          'callback' => array($this, 'ErrorNotFound'));
+        // 404
+        //$routes[] = array('pattern'  => '#^/error/404$#',
+        //                  'callback' => array($this, 'ErrorNotFound'));
                           
         $this->SetRoutes($routes);
     }

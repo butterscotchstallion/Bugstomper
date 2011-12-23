@@ -8,10 +8,17 @@ use model\IssueReport as IssueReport;
 
 class PrettyGraphsModule extends BaseModule
 {
-    public function __construct()
+    public function __construct($dependencies)
     {
+        parent::__construct($dependencies);
+        
         $routes   = array();
         
+        // JSON comment distribution
+        $routes['CommentDistribution'] = array('pattern'  => '#^/pretty-graphs-and-stuff/comment-distribution$#',
+                                               'callback' => array($this, 'CommentDistribution'),
+                                               'accept'   => 'application/json');
+                                              
         // JSON opener distribution
         $routes['OpenerDistribution'] = array('pattern'  => '#^/pretty-graphs-and-stuff/opener-distribution$#',
                                               'callback' => array($this, 'OpenerDistribution'),
@@ -32,6 +39,14 @@ class PrettyGraphsModule extends BaseModule
                                        'callback' => array($this, 'StatusIndex'));
                                   
         $this->SetRoutes($routes);
+    }
+    
+    public function CommentDistribution()
+    {
+        $objIssue             = new IssueReport($this->GetConnection());
+        $commentDistribution = $objIssue->GetIssueCommentDistribution();
+        
+        $this->DisplayGraphData($commentDistribution);
     }
     
     public function StatusIndex()
@@ -60,7 +75,7 @@ class PrettyGraphsModule extends BaseModule
     {
         $objIssue           = new IssueReport($this->GetConnection());
         $statusDistribution = $objIssue->GetIssueStatusDistribution();
-    
+        
         $this->DisplayGraphData($statusDistribution);
     }
     

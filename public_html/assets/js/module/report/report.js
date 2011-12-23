@@ -1,6 +1,30 @@
 
 
 $(document).ready(function() {
+    // Comment distribution
+	$.getJSON('/pretty-graphs-and-stuff/comment-distribution', function(data) {
+		$.plot($("#commentChart"), data,
+		{
+			series: {
+				pie: { 
+					show: true,
+					radius: 1,
+					label: {
+						show: true,
+						radius: 2/3,
+						formatter: function(label, series){
+							return '<div style="font-size:1em;text-align:center;padding:2px;color:#000;"><b>'+label+'</b><br/>'+Math.round(series.percent)+'%</div>';
+						},
+						threshold: 0.1
+					}
+				}
+			},
+			legend: {
+				show: true
+			}
+		});
+	});
+    
 	// Status distribution
 	$.getJSON('/pretty-graphs-and-stuff/issue-distribution', function(data) {
 		$.plot($("#statusChart"), data,
@@ -13,14 +37,14 @@ $(document).ready(function() {
 						show: true,
 						radius: 2/3,
 						formatter: function(label, series){
-							return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+							return '<div style="font-size:1em;text-align:center;padding:2px;color:#000;"><b>'+label+'</b><br/>'+Math.round(series.percent)+'%</div>';
 						},
 						threshold: 0.1
 					}
 				}
 			},
 			legend: {
-				show: false
+				show: true
 			}
 		});
 	});
@@ -37,14 +61,14 @@ $(document).ready(function() {
 						show: true,
 						radius: 2/3,
 						formatter: function(label, series){
-							return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+							return '<div style="font-size:1em;text-align:center;padding:2px;color:#000;"><b>'+label+'</b><br/>'+Math.round(series.percent)+'%</div>';
 						},
 						threshold: 0.1
 					}
 				}
 			},
 			legend: {
-				show: false
+				show: true
 			}
 		});
 	});
@@ -61,14 +85,14 @@ $(document).ready(function() {
 						show: true,
 						radius: 2/3,
 						formatter: function(label, series){
-							return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+label+'<br/>'+Math.round(series.percent)+'%</div>';
+							return '<div style="font-size:1em;text-align:center;padding:2px;color:#000;"><b>'+label+'</b><br/>'+Math.round(series.percent)+'%</div>';
 						},
 						threshold: 0.1
 					}
 				}
 			},
 			legend: {
-				show: false
+				show: true
 			}
 		});
 	});

@@ -6,7 +6,7 @@
 namespace module;
 abstract class BaseModule 
 {
-    private $routes = array();
+    private $routes       = array();
     private $dependencies = array();
     
     public function __construct($dependencies)
@@ -23,12 +23,11 @@ abstract class BaseModule
      */
     public function CheckSignIn()
     {
-        $userIdentity = $this->GetUserID();
+        $userIdentity = $this->GetUserSession()->UserID();
         
         if( ! $userIdentity )
         {
-            header('Location: /user/sign-in');
-            die;
+            $this->GetHTTPResponse()->Redirect('/user/signIn');
         }
         
         return true;
@@ -52,7 +51,13 @@ abstract class BaseModule
          */
         if( $getOrSet == 'get' )
         {
-            return isset($this->dependencies[$property]) ? $this->dependencies[$property] : false;
+            // Can't find that dependency
+            if( ! isset($this->dependencies[$property]) )
+            {
+                throw new \InvalidArgumentException(sprintf('Non-existent dependency: %s', $property));
+            }
+            
+            return $this->dependencies[$property];
         }
         /*
          * SET

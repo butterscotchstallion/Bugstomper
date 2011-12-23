@@ -8,8 +8,10 @@ use model\User as UserModel;
 
 class SettingsModule extends BaseModule
 {
-    public function __construct()
+    public function __construct($dependencies)
     {
+        parent::__construct($dependencies);
+        
         $routes = array();
         
         $checkSignInCallback = array($this, 'CheckSignIn');

@@ -125,6 +125,11 @@ class Issue extends Model
 		return $this->FetchAll($q);
 	}
 	
+    /**
+     * Fetches issues with optional filters
+     * @param array $filters
+     *
+     */
 	public function GetIssues($filters = array())
 	{
 		$params 	    = array();
