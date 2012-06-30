@@ -31,6 +31,7 @@ class ErrorHandler extends BaseModule
     public function ErrorCritical($exception)
     {
         // TODO: log exception
+        $this->GetLogger()->Fatal(sprintf('500: %s', $exception));
         
         $this->GetHTTPResponse()->Send(500);
         $this->GetView()->Display(array('tpl' => '../view/Error/500.template.php'));

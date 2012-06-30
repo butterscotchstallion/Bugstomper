@@ -3,10 +3,18 @@
  * Issue - model for storing issues
  *
  */
-namespace model;
-class Issue extends Model
+namespace Bugstomper\Model;
+
+class Issue
 {
-	public function Update($issue)
+    private $db;
+    
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
+    
+	public function update($issue)
 	{
 		$assignedTo = isset($issue['assignedTo']) ? intval($issue['assignedTo']) : null;
 		
@@ -25,7 +33,7 @@ class Issue extends Model
 		return $this->Save($q, $params);
 	}
 	
-	public function Add($objIssue)
+	public function add($objIssue)
 	{
 		$q      = 'INSERT INTO issue(title, 
 								     description, 
@@ -46,7 +54,7 @@ class Issue extends Model
 		return $this->Save($q, $params);
 	}
 	
-	public function GetIssueByID($issueID)
+	public function getIssueByID($issueID)
 	{
 		$q    = "SELECT b.id,
 						b.title,
@@ -86,7 +94,7 @@ class Issue extends Model
 		return false;
 	}
 	
-	public function GetIssueTypes()
+	public function getIssueTypes()
 	{
 		$q = 'SELECT bt.id,
 					 bt.name
@@ -94,7 +102,7 @@ class Issue extends Model
 		return $this->FetchAll($q);
 	}
 	
-	public function GetIssueImages($id)
+	public function getIssueImages($id)
 	{
 		$q = 'SELECT bi.id,
 					 bi.filename,
@@ -105,7 +113,7 @@ class Issue extends Model
 		return $this->FetchAll($q, array(':id' => intval($id)));
 	}
 	
-	public function GetSeverity()
+	public function getSeverity()
 	{
 		$q = 'SELECT id,
 					 name,
@@ -114,7 +122,7 @@ class Issue extends Model
 		return $this->FetchAll($q);
 	}
 	
-	public function GetStatus()
+	public function getStatus()
 	{
 		$q = 'SELECT id,
 					 name,
@@ -130,7 +138,7 @@ class Issue extends Model
      * @param array $filters
      *
      */
-	public function GetIssues($filters = array())
+	public function getIssues($filters = array())
 	{
 		$params 	    = array();
 		
@@ -138,8 +146,7 @@ class Issue extends Model
 		$searchQuery    = isset($filters['query']) ? urldecode($filters['query']) : '';
 		$searchQuerySQL = '';
 		
-		if( $searchQuery )
-		{
+		if ($searchQuery) {
 			$searchQuerySQL 		= sprintf('AND (b.title 		 LIKE :searchQuery 
 											   OR   b.description    LIKE :searchQueryDesc)');
 			$params[':searchQuery']     = sprintf('%%%s%%', $searchQuery); 
@@ -149,8 +156,7 @@ class Issue extends Model
 		// Status filter
 		$status    = isset($filters['status']) ? array_map('intval', $filters['status']) : array();
 		$statusSQL = '';
-		if( $status )
-		{
+		if ($status) {
 			$tmp  	   		   = array_map('intval', $status);
 			$statusIDs 		   = implode(',', $tmp);
 			$statusSQL 		   = sprintf('AND b.status IN(%s)', $statusIDs);
@@ -159,8 +165,7 @@ class Issue extends Model
 		// Severity filter
 		$severity    = isset($filters['severity']) ? intval($filters['severity']) : 0;
 		$severitySQL = '';
-		if( $severity )
-		{
+		if ($severity) {
 			$severitySQL 		 = 'AND b.severity = :severity';
 			$params[':severity'] = $severity;
 		}
@@ -168,14 +173,12 @@ class Issue extends Model
 		// Assigned filter
 		$assigned    = isset($filters['assigned']) ? intval($filters['assigned']) : 0;
 		$assignedSQL = '';
-		if( $assigned > 0 || $assigned === -1 )
-		{
+		if ($assigned > 0 || $assigned === -1) {
 			$assignedSQL 		 = 'AND b.assigned_to = :assigned';
 			$params[':assigned'] = $assigned;
 			
 			// Unassigned is set to -1
-			if( $assigned === -1 )
-			{
+			if ($assigned === -1) {
 				$assignedSQL = 'AND b.assigned_to IS NULL';
 				
 				// Won't be needing this then
@@ -212,8 +215,8 @@ class Issue extends Model
 						 $severitySQL,
 						 $assignedSQL,
 						 $searchQuerySQL);
-						 
-		return $this->FetchAll($q, $params);
+        
+		return $this->db->fetchAll($q, $params);
 	}
 	
 	public function GetIssueChangeLog($id)

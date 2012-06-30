@@ -41,6 +41,10 @@ class PrettyGraphsModule extends BaseModule
         $this->SetRoutes($routes);
     }
     
+    /**
+     * Comments grouped by issue id
+     *
+     */
     public function CommentDistribution()
     {
         $objIssue             = new IssueReport($this->GetConnection());
@@ -84,13 +88,13 @@ class PrettyGraphsModule extends BaseModule
      * JSON header and dies.
      *
      * @param object $jsonResultSet - json_encoded result set
-     * @return null
+     * @return void
      *
      */
     public function DisplayGraphData($jsonResultSet)
     {
         header('Content-Type: application/json');
-        echo $jsonResultSet;
+        echo json_encode($jsonResultSet, JSON_NUMERIC_CHECK);
         die;
     }
 }

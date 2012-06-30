@@ -12,6 +12,15 @@
  **/
 
 return array(
+    'css' => array(
+        '//assets/css/bootstrap.min.css'
+    ),
+    
+    'js' => array(
+    
+    )
+    
+    /*
     'globalCSS' => array(
         '//assets/css/style.css',
         '//assets/css/jquery.qtip.min.css',
@@ -34,4 +43,5 @@ return array(
     'SettingsModuleCSS' => array(
         '//assets/css/module/Settings/Settings.css'
     )
+    */
 );

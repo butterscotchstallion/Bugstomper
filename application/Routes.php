@@ -59,8 +59,12 @@ try
     }
     
     // Set up error handler
+    Logger::configure(sprintf('%s/application/log4php.xml', APP_ROOT));
+    $logger = Logger::getLogger('Critical');
+    
     $objHandler = new ErrorHandler(array('View'         => $objView,
-                                         'HTTPResponse' => $objHTTPResponse));
+                                         'HTTPResponse' => $objHTTPResponse,
+                                         'Logger'       => $logger));
     
     // Load route
     $routeLoaded = $objRouter->Route();
