@@ -50,15 +50,14 @@ $app->get('/', function(Silex\Application $app) {
 });
 
 // A specific issue
-$app->get('/issue/{id}', function(Application $app, Request $req, $id) {
+$app->get('/issue/{id}', function(Silex\Application $app, Request $req, $id = 0) {
     $issue = $app['issueModel']->getIssueByID($id);
     
     return $app['twig']->render('Issue/Issue.twig', array(
         'issue' => $issue
-    ));    
+    ));
     
-});
-//->assert('id', '\d+')
+})->assert('id', '\d+');
 
 $app->run();
 

@@ -13,7 +13,11 @@
 
 return array(
     'css' => array(
-        '//assets/css/bootstrap.min.css'
+        '//assets/css/bootstrap.min.css'       
+    ),
+    
+    'issueCSS' => array(
+        '//assets/css/issue/issue.css'
     ),
     
     'js' => array(

@@ -83,12 +83,14 @@ class Issue
 				 LEFT JOIN user ua ON b.assigned_to = ua.id
 				 WHERE b.id = :issueID";
 		
-		$objIssue = $this->Fetch($q, array(':issueID' => intval($issueID)));
+        $stmt = $this->db->prepare($q);
+        $stmt->execute(array(':issueID' => intval($issueID)));
+        
+		$issue = $stmt->fetch();
 		
-		if( $objIssue )
-		{
-			$objIssue->images = $this->GetIssueImages($issueID);
-			return $objIssue;
+		if ($issue) {
+			$issue['images'] = $this->getIssueImages($issueID);
+			return $issue;
 		}
 		
 		return false;
@@ -110,7 +112,11 @@ class Issue
 					 bi.issue_id AS issueID
 			  FROM issue_image bi
 			  WHERE bi.id = :id';
-		return $this->FetchAll($q, array(':id' => intval($id)));
+        
+        $stmt = $this->db->prepare($q);
+        $stmt->execute(array(':id' => intval($id)));
+        
+		return $stmt->fetchAll();
 	}
 	
 	public function getSeverity()
