@@ -48,6 +48,7 @@ class User
 	public function getUserByID($userID)
 	{
 		$q    = "SELECT u.login,
+                        u.id,
 						u.created_at AS createdAt,
                         CASE WHEN LENGTH(u.display_name) > 0
                         THEN u.display_name
@@ -61,17 +62,60 @@ class User
         $stmt = $this->db->prepare($q);
         $stmt->execute(array(':userID' => $userID));
         
-		return $stmt->fetch();
+		$user = $stmt->fetch();
+        
+        if ($user) {
+            $user['assignedIssues'] = $this->getIssuesAssignedToUser($user['id']);
+            $user['openedIssues']   = $this->getIssuesOpenedByUser($user['id']);
+        }
+        
+        return $user;
 	}
 	
+    public function getIssuesAssignedToUser($id)
+    {
+        $q = 'SELECT i.id,
+                     i.title
+              FROM issue i
+              WHERE 1=1
+              AND i.assigned_to = :id';
+              
+        $stmt = $this->db->prepare($q);
+        $stmt->execute(array('id' => $id));
+        $issues = $stmt->fetchAll();       
+        
+        return $issues ? $issues : array();
+    }
+    
+    public function getIssuesOpenedByUser($id)
+    {
+        $q = 'SELECT i.id,
+                     i.title
+              FROM issue i
+              WHERE 1=1
+              AND i.opened_by = :id';
+              
+        $stmt = $this->db->prepare($q);
+        $stmt->execute(array('id' => $id));
+        $issues = $stmt->fetchAll();       
+        
+        return $issues ? $issues : array();
+    }
+    
 	public function getUsers()
 	{
 		$q    = 'SELECT u.id,
-						u.login,
-						u.created_at
+						u.created_at,
+                        u.login,
+                        COALESCE(u.display_name, u.login) AS displayName
 				 FROM user u
 				 ORDER BY login';
-		return $this->FetchAll($q);
+                 
+		$stmt = $this->db->prepare($q);
+        $stmt->execute();
+        $users = $stmt->fetchAll();       
+        
+        return $users ? $users : array();
 	}
 	
     /**

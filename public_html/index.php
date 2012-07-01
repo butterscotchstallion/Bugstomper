@@ -75,6 +75,15 @@ $app->get('/u/{id}', function(Silex\Application $app, Request $req, $id = 0) {
     
 })->assert('id', '\d+');
 
+// User list
+$app->get('/u', function(Silex\Application $app, Request $req, $id = 0) {
+    $users = $app['userModel']->getUsers();
+    
+    return $app['twig']->render('User/List.twig', array(
+        'users' => $users
+    ));
+    
+});
 
 $app->run();
 

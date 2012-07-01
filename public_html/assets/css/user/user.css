@@ -1,2 +1,16 @@
 
 
+.userBlocks {
+    margin: 1em 0 1em 0;
+}
+    .userBlocks ul {
+        margin: 0;
+        padding: 0;
+                list-style: square;
+    }
+    
+    .userBlocks ul li {
+        display: block;        
+        margin: .5em 0 1em .25em;
+        padding: 0;
+    }
