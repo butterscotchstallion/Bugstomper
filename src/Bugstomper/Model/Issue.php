@@ -60,6 +60,7 @@ class Issue
 						b.title,
 						b.description,
 						b.created_at AS createdAt,
+                        b.updated_at AS updatedAt,
 						bs.id AS severityID,
 						b.slug,
 						bs.id AS severityID,
@@ -89,11 +90,10 @@ class Issue
 		$issue = $stmt->fetch();
 		
 		if ($issue) {
-			$issue['images'] = $this->getIssueImages($issueID);
-			return $issue;
+            $issue['images'] = $this->getIssueImages($issueID);
 		}
 		
-		return false;
+		return $issue;
 	}
 	
 	public function getIssueTypes()

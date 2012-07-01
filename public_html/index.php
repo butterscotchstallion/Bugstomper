@@ -5,7 +5,8 @@
  *
  */
 use Symfony\Component\HttpFoundation\Request,
-    Bugstomper\Model\Issue;
+    Bugstomper\Model\Issue,
+    Bugstomper\Model\User;
 
 ob_start();
 session_start();
@@ -13,7 +14,7 @@ error_reporting(-1);
 ini_set('display_errors', 1);
 date_default_timezone_set('America/New_York');
 
-require '../application/config.php';
+require '../src/Bugstomper/config.php';
 require '../vendor/autoload.php';
 
 $app          = new Silex\Application();
@@ -40,6 +41,11 @@ $app['issueModel'] = $app->share(function(Silex\Application $app) {
     return new Issue($app['db']);
 });
 
+// Add user model
+$app['userModel'] = $app->share(function(Silex\Application $app) {
+    return new User($app['db']);
+});
+
 // List issues
 $app->get('/', function(Silex\Application $app) {
     $issues = $app['issueModel']->getIssues();
@@ -50,7 +56,7 @@ $app->get('/', function(Silex\Application $app) {
 });
 
 // A specific issue
-$app->get('/issue/{id}', function(Silex\Application $app, Request $req, $id = 0) {
+$app->get('/i/{id}', function(Silex\Application $app, Request $req, $id = 0) {
     $issue = $app['issueModel']->getIssueByID($id);
     
     return $app['twig']->render('Issue/Issue.twig', array(
@@ -58,6 +64,17 @@ $app->get('/issue/{id}', function(Silex\Application $app, Request $req, $id = 0)
     ));
     
 })->assert('id', '\d+');
+
+// User profile
+$app->get('/u/{id}', function(Silex\Application $app, Request $req, $id = 0) {
+    $user = $app['userModel']->getUserByID($id);
+    
+    return $app['twig']->render('User/User.twig', array(
+        'user' => $user
+    ));
+    
+})->assert('id', '\d+');
+
 
 $app->run();
 

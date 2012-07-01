@@ -13,15 +13,21 @@
 
 return array(
     'css' => array(
-        '//assets/css/bootstrap.min.css'       
+        '//assets/css/bootstrap.min.css',
+        '//assets/css/issue/issue.css',        
+        '//assets/css/user/user.css'        
     ),
     
+    /*
     'issueCSS' => array(
         '//assets/css/issue/issue.css'
     ),
+    */
     
     'js' => array(
-    
+        '//assets/js/jquery-1.7.min.js',
+        '//assets/js/jquery.timeago.js',
+        '//assets/js/init.js' 
     )
     
     /*

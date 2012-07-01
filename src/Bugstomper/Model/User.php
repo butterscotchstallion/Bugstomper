@@ -3,9 +3,17 @@
  * User - operations on the User model
  *
  */
-namespace model;
-class User extends Model
+namespace Bugstomper\Model;
+
+class User
 {
+    private $db;
+    
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
+    
     /**
      * Updates user model based on properties
      * specified 
@@ -16,7 +24,7 @@ class User extends Model
      * required properties: id
      *
      */
-	public function Update($properties)
+	public function update($properties)
 	{
         $query  = 'UPDATE user SET ';
         $query .= $this->BuildUpdateQuery($properties);
@@ -29,7 +37,7 @@ class User extends Model
 		return $this->Save($query, $params);
 	}
 	
-	public function Add($objUser)
+	public function add($objUser)
 	{
 		$q    = 'INSERT INTO user(login, password, created_at)
 			     VALUES(:login, :password, NOW())';
@@ -37,7 +45,7 @@ class User extends Model
 									 ':password' 	=> $objUser->password));
 	}
 	
-	public function GetUserByID($userID)
+	public function getUserByID($userID)
 	{
 		$q    = "SELECT u.login,
 						u.created_at AS createdAt,
@@ -49,10 +57,14 @@ class User extends Model
 				 FROM user u
                  LEFT JOIN openid_account o ON o.user_id = u.id
 				 WHERE u.id = :userID";
-		return $this->Fetch($q, array(':userID' => $userID));
+                 
+        $stmt = $this->db->prepare($q);
+        $stmt->execute(array(':userID' => $userID));
+        
+		return $stmt->fetch();
 	}
 	
-	public function GetUsers()
+	public function getUsers()
 	{
 		$q    = 'SELECT u.id,
 						u.login,
@@ -69,7 +81,7 @@ class User extends Model
      * @return object | false
      *  
      */
-	public function GetUserByOpenID($identity)
+	public function getUserByOpenID($identity)
 	{
 		$q    = 'SELECT u.id,
                         u.login,

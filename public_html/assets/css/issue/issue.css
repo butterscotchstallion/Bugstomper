@@ -1,0 +1,30 @@
+
+
+#issueInfoBar {
+    margin: 1em 1em 1em 0;
+}
+
+#issueInfoBar ul {
+    margin: 0;
+    padding: 0;
+}
+
+    #issueInfoBar ul li {
+        font-size: 125%;
+        display: block;
+        float: left;
+        margin: 0 .25em 0 1em;
+    }
+    
+    #issueInfoBar ul li#firstInfoItem {
+        margin-left: 0;
+    }
+
+#issueDescription {
+    font-size: 125%;
+    line-height: 1.85;
+}
+
+#editLink {
+    float: right;
+}
