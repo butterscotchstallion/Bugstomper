@@ -1,0 +1,13 @@
+{
+    "require": {
+        "silex/silex": "1.0.*",
+        "monolog/monolog": ">=1.0.0",
+        "swiftmailer/swiftmailer": ">=4.1",
+        "doctrine/dbal": "2.2.*",
+        "twig/twig": ">=1.8,<2.0-dev"
+    },
+    
+    "autoload": {
+        "psr-0": {"Bugstomper": "src"}
+    }
+}

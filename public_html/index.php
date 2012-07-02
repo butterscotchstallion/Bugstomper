@@ -23,11 +23,14 @@ $app['debug'] = true;
 // Get DB connection
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options'   => array(
-        'driver'   => 'pdo_mysql',
-        'host'     => DB_HOST,
-        'dbname'   => DB_NAME,
-        'user'     => DB_USER,
-        'password' => DB_PASSWORD
+        'driver'        => 'pdo_mysql',
+        'host'          => DB_HOST,
+        'dbname'        => DB_NAME,
+        'user'          => DB_USER,
+        'password'      => DB_PASSWORD,
+        'driverOptions' => array(
+                        1002 => 'SET NAMES utf8'
+        )
     )
 ));
 
@@ -61,6 +64,20 @@ $app->get('/i/{id}', function(Silex\Application $app, Request $req, $id = 0) {
     
     return $app['twig']->render('Issue/Issue.twig', array(
         'issue' => $issue
+    ));
+    
+})->assert('id', '\d+');
+
+// Edit issue
+$app->get('/i/{id}/edit', function(Silex\Application $app, Request $req, $id = 0) {
+    $issue    = $app['issueModel']->getIssueByID($id);
+    $status   = $app['issueModel']->getStatus();
+    $severity = $app['issueModel']->getSeverity();
+    
+    return $app['twig']->render('Issue/Edit.twig', array(
+        'issue'    => $issue,
+        'status'   => $status,
+        'severity' => $severity
     ));
     
 })->assert('id', '\d+');

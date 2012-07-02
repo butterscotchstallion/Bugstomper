@@ -125,7 +125,10 @@ class Issue
 					 name,
 					 description
 			  FROM issue_severity';
-		return $this->FetchAll($q);
+		$stmt = $this->db->prepare($q);
+        $stmt->execute();
+        
+		return $stmt->fetchAll();
 	}
 	
 	public function getStatus()
@@ -136,7 +139,10 @@ class Issue
 					 description
 			  FROM issue_status
 			  ORDER BY display_order';
-		return $this->FetchAll($q);
+		$stmt = $this->db->prepare($q);
+        $stmt->execute();
+        
+		return $stmt->fetchAll();
 	}
 	
     /**

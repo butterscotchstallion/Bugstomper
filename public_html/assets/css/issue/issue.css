@@ -28,3 +28,12 @@
 #editLink {
     float: right;
 }
+
+#editIssueDescription {
+    width: 98%;
+    display: block;
+    padding: 1em;
+    min-height: 500px;
+    height: auto !important;
+    height: 500px;
+}
