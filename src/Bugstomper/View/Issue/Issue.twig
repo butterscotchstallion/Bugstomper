@@ -1,0 +1,11 @@
+{% include 'Header.twig' %}
+
+<h1><a href="/i/{{ issue.id }}">{{ issue.title|e }}</a></h1>
+{% include "Issue/IssueInfo.twig" %}
+
+<div class="well" id="issueDescription">
+    {{ issue.description|e }}
+</div>
+
+
+{% include 'Footer.twig' %}

@@ -1,0 +1,26 @@
+{% include 'Header.twig' %}
+
+<form method="post" action="">
+    <input type="hidden" name="issue[id]" value="{{ issue.id }}">
+
+    <input type="text" class="span12" name="issue[title]" value="{{ issue.title|e }}">
+    
+    {% include "Issue/IssueInfo.twig" %}
+    
+    <ul class="nav nav-tabs" id="issueTabs">
+        <li class="active"><a href="#issueDescription" class="active" data-toggle="tab">Description</a></li>
+        <li><a href="#changelog" data-toggle="tab">Change Log</a></li>
+    </ul>
+    
+    <div class="tab-content">
+        <div class="tab-pane active" id="issueDescription">
+            <textarea id="editIssueDescription" name="issue[description]">{{ issue.description|e }}</textarea>
+        </div>
+        
+        <div class="tab-pane" id="changelog">
+            hi.
+        </div>
+    </div>    
+</form>
+
+{% include 'Footer.twig' %}

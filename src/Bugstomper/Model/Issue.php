@@ -21,19 +21,27 @@ class Issue
 		$q    = 'UPDATE issue
 				 SET title 		 = :title,
 					 description = :description,
-					 updated_at  = CURDATE(),
+					 updated_at  = NOW(),
 					 severity 	 = :severity,
 					 status 	 = :status,
 					 assigned_to = :assignedTo
 			     WHERE 1=1
 				 AND id 		 = :id';
         
-		$params = $this->BuildParams($issue);
+		$params = array(':title'       => $issue['title'],
+                        ':description' => $issue['description'],
+                        ':severity'    => $issue['severity'],
+                        ':status'      => $issue['status'],
+                        ':assignedTo'  => $assignedTo,
+                        ':id'          => $issue['id']);
 		
-		return $this->Save($q, $params);
+		$stmt   = $this->db->prepare($q);
+        $result = $stmt->execute($params);
+        
+        return $result ? $stmt->rowCount() : $result;
 	}
 	
-	public function add($objIssue)
+	public function add($issue)
 	{
 		$q      = 'INSERT INTO issue(title, 
 								     description, 
@@ -46,12 +54,15 @@ class Issue
 						  :openedBy,
 						  :slug)';
 				   
-		$params = array(':title' 		=> $objIssue->title,
-						':description'  => $objIssue->description,
-						':openedBy' 	=> $objIssue->openedBy,
-						':slug'			=> $objIssue->slug);
+		$params = array(':title' 		=> $issue['title'],
+						':description'  => $issue['description'],
+						':openedBy' 	=> $issue['openedBy'],
+						':slug'			=> $issue['slug']);
 						
-		return $this->Save($q, $params);
+		$stmt   = $this->db->prepare($q);
+        $result = $stmt->execute($params);
+        
+        return $result ? $this->db->lastInsertId() : $result;
 	}
 	
 	public function getIssueByID($issueID)

@@ -30,10 +30,12 @@
 }
 
 #editIssueDescription {
-    width: 98%;
+    width: 90%;
     display: block;
     padding: 1em;
     min-height: 500px;
     height: auto !important;
     height: 500px;
+    font-size: 120%;
+    line-height: 1.85;
 }

@@ -1,0 +1,24 @@
+
+
+<div id="issueInfoBar" class="clearfix">
+    <ul>
+        <li id="firstInfoItem">
+            <strong>Status</strong> {{ issue.statusName }}
+        </li>
+        <li>
+            <strong>Assigned To</strong> <a href="/u/{{ issue.assignedToUserID }}">{{ issue.assignedToUserLogin }}</a>
+        </li>
+        <li>
+            <strong>Opened by</strong> <a href="/u/{{ issue.openedByUserID }}">{{ issue.openedByUserLogin }}</a> 
+            <abbr title="{{ issue.createdAt }}" class="timeago">{{ issue.createdAt }}</abbr>
+        </li>
+        <li>
+            <strong>Severity</strong> {{ issue.severityName }}
+        </li>
+        <li>
+            <strong>Last Update</strong> <abbr title="{{ issue.updatedAt }}" class="timeago">{{ issue.updatedAt }}</abbr>
+        </li>
+    </ul>
+    
+    <a href="/i/{{ issue.id}}/edit" class="btn btn-info" id="editLink"><i class="icon-pencil icon-white"></i> Edit</a>
+</div>
