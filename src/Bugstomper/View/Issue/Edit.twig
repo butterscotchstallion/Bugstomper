@@ -3,9 +3,47 @@
 <form method="post" action="">
     <input type="hidden" name="issue[id]" value="{{ issue.id }}">
 
-    <input type="text" class="span12" name="issue[title]" value="{{ issue.title|e }}">
+    <input type="text" 
+           class="span12" 
+           name="issue[title]" 
+           value="{{ issue.title|e }}"
+           maxlength="255">
     
-    {% include "Issue/IssueInfo.twig" %}
+    <div id="issueInfoBar" class="clearfix">
+        <ul>
+            <li id="firstInfoItem">
+                <select name="issue[status]" class="span14">
+                    {% for s in status %}
+                        <option value="{{ s.id }}" {% if s.id == issue.statusID %}selected{% endif %}>{{ s.name }}</option>
+                    {% endfor %}
+                </select>
+            </li>
+            <li>
+                <select name="issue[severity]" class="span12">
+                    {% for s in severity %}
+                        <option value="{{ s.id }}" {% if s.id == issue.severityID %}selected{% endif %}>{{ s.name }}</option>
+                    {% endfor %}
+                </select>
+            </li>
+            <li>
+                <select name="issue[assignedTo]">
+                    {% for u in users %}
+                        <option value="{{ u.id }}" {% if u.id == issue.assignedToUserID %}selected{% endif %}>{{ u.displayName|default(u.login) }}</option>
+                    {% endfor %}
+                </select>
+            </li>   
+            <li>
+                <strong>Opened by</strong> <a href="/user/{{ issue.openedByUserID }}">{{ issue.openedByUserLogin }}</a> 
+                <abbr title="{{ issue.createdAt }}" class="timeago">{{ issue.createdAt }}</abbr>
+            </li>          
+            <li>
+                <strong>Updated</strong> <abbr title="{{ issue.updatedAt }}" class="timeago">{{ issue.updatedAt }}</abbr>
+            </li>
+        </ul>
+        
+        <button type="submit" class="btn btn-success" id="editLink"><i class="icon-ok icon-white"></i> Save</button>
+    </div>
+
     
     <ul class="nav nav-tabs" id="issueTabs">
         <li class="active"><a href="#issueDescription" class="active" data-toggle="tab">Description</a></li>

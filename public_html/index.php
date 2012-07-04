@@ -63,7 +63,7 @@ $app->get('/', function(Silex\Application $app) {
 });
 
 // A specific issue
-$app->get('/i/{id}', function(Silex\Application $app, Request $req, $id = 0) {
+$app->get('/issue/{id}', function(Silex\Application $app, Request $req, $id = 0) {
     $issue = $app['issueModel']->getIssueByID($id);
     
     return $app['twig']->render('Issue/Issue.twig', array(
@@ -73,7 +73,7 @@ $app->get('/i/{id}', function(Silex\Application $app, Request $req, $id = 0) {
 })->assert('id', '\d+');
 
 // Edit issue
-$app->get('/i/{id}/edit', function(Silex\Application $app, Request $req, $id = 0) {
+$app->get('/issue/{id}/edit', function(Silex\Application $app, Request $req, $id = 0) {
     $issue    = $app['issueModel']->getIssueByID($id);
     $status   = $app['issueModel']->getStatus();
     $severity = $app['issueModel']->getSeverity();
@@ -89,7 +89,7 @@ $app->get('/i/{id}/edit', function(Silex\Application $app, Request $req, $id = 0
 })->assert('id', '\d+');
 
 // Save issue
-$app->post('/i/{id}/edit', function(Silex\Application $app, Request $req, $id = 0) {
+$app->post('/issue/{id}/edit', function(Silex\Application $app, Request $req, $id = 0) {
     
     $issue = $req->get('issue');
     
@@ -99,13 +99,13 @@ $app->post('/i/{id}/edit', function(Silex\Application $app, Request $req, $id = 
         $msg = $result ? 'Issue updated successfully' : 'Failed to update issue';
         $app['session']->set('message', $msg);
         
-        return new RedirectResponse(sprintf('/i/%d', $id));
+        return new RedirectResponse(sprintf('/issue/%d', $id));
     } 
     
 })->assert('id', '\d+');
 
 // User profile
-$app->get('/u/{id}', function(Silex\Application $app, Request $req, $id = 0) {
+$app->get('/user/{id}', function(Silex\Application $app, Request $req, $id = 0) {
     $user = $app['userModel']->getUserByID($id);
     
     return $app['twig']->render('User/User.twig', array(
@@ -115,7 +115,7 @@ $app->get('/u/{id}', function(Silex\Application $app, Request $req, $id = 0) {
 })->assert('id', '\d+');
 
 // User list
-$app->get('/u', function(Silex\Application $app, Request $req, $id = 0) {
+$app->get('/user', function(Silex\Application $app, Request $req, $id = 0) {
     $users = $app['userModel']->getUsers();
     
     return $app['twig']->render('User/List.twig', array(

@@ -221,7 +221,7 @@ class Issue
                                 b.status AS statusID,
 						 		bs.name AS statusName,
 						 		bs.style_name AS statusStyleName,
-								COALESCE(ua.login, 'Unassigned') AS assignedToUserLogin,
+								COALESCE(ua.display_name, ua.login, 'Unassigned') AS assignedToUserLogin,
 								b.assigned_to AS assignedToUserID
 						 FROM issue b
 						 INNER JOIN user 		    u ON b.opened_by   = u.id
